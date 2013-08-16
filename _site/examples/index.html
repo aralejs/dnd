@@ -1,0 +1,239 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8">
+    <title>arale/dnd - 演示文档</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="nico 0.4.4" />
+    <link type="image/x-icon" href="../static/css/favicon.ico" rel="icon">
+    <link rel="stylesheet" href="../static/css/normalize.css" />
+    <link rel="stylesheet" href="../static/css/site.css" />
+    <link rel="stylesheet" href="../static/css/solarized.css" />
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-36247332-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    if (location.port) {
+       return;
+    }
+    ga.src = 'https://ssl.google-analytics.com/ga.js'; 
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<script src="http://assets.spmjs.org/??
+seajs/seajs/2.1.1/sea.js,
+seajs/seajs-combo/1.0.0/seajs-combo.js,
+seajs/seajs-debug/1.0.0/seajs-debug.js,
+seajs/seajs-style/1.0.0/seajs-style.js,
+seajs/seajs-health/0.1.0/seajs-health.js,
+jquery/jquery/1.7.2/jquery.js"></script>
+<script>
+  (function() {
+
+  var query = location.search.substring(1).split('&');
+  var srcdir = 'src';
+
+  if (contain(query, 'dist')) {
+    srcdir = 'dist';
+    
+      seajs.use("../dist/dnd.js");
+  } else if (contain(query, 'cov')) {
+    srcdir = 'src-cov';
+  }
+
+  seajs.config({
+    alias: {
+      "$": 'jquery/jquery/1.7.2/jquery',
+      "jquery": 'jquery/jquery/1.7.2/jquery',
+      "jquery-debug": 'jquery/jquery/1.7.2/jquery-debug',
+      expect: "gallery/expect/0.2.0/expect",
+      puerh: "popomore/puerh/0.1.0/puerh",
+      handlebars: "gallery/handlebars/1.0.2/handlebars",
+      sinon: "gallery/sinon/1.6.0/sinon"
+    },
+    map: [function(uri) {
+      // resolve id
+      var m = uri.match(/arale\/dnd\/1.0.0\/(.*)/);
+      if (m) {
+        return resolve(m[1]);
+      }
+      return uri;
+    }],
+    comboExcludes: {test: function(uri) {
+      return uri.indexOf('http://assets.spmjs.org') === -1;
+    }}
+  });
+
+  function resolve(file) {
+    if (contain(query, 'debug')) {
+      if (file.indexOf('-debug') === -1) {
+        file = file.replace(/\.(\w+)$/, '-debug.$1');
+      }
+    }
+    return seajs.resolve("../" + srcdir + "/" + file + '#');
+  }
+
+  function contain(arr, value) {
+    for (var i in arr) {
+      if (arr[i] === value) {
+        return true;
+      }
+    }
+    return false;
+  }
+      seajs.config({ alias: {"base":"arale/base/1.1.1/base"}});
+    seajs.use([]);
+      seajs.config({ alias: {}});
+
+    seajs.config({alias: {
+      "$-debug": 'jquery/jquery/1.7.2/jquery-debug'
+        ,"dnd": resolve("dnd.js")
+    }});
+
+    // 加载依赖的 css 文件
+    var cssArray = [];
+    cssArray.push('arale/base/1.1.1/base');
+    for (var i=0; i<cssArray.length; i++) {
+      if (cssArray[i].indexOf('.css') < 0) {
+        cssArray.splice(i, 1);
+      }
+    }
+    seajs.use(cssArray);
+  })();
+</script>
+    <script src="../static/js/site.js"></script>
+    <!--[if lt IE 9]>
+    <script src="../static/js/html5shiv.js"></script>
+    <![endif]-->
+    
+  </head>
+  <body>
+    <div id="body-wrapper">
+      <aside id="sidebar-wrapper">
+      <h1>
+          <a href="../">Dnd</a><sup class="package-root"><a href="/">arale</a></sup>
+      </h1>
+        <p class="version">当前版本：<a href="http://aralejs.org/docs/online-status.html#arale-dnd" title="点击查看此组件发布情况">1.0.0</a></p>
+        <p class="description">drag and drop</p>
+        <a class="source" href="git://gitlab.alibaba-inc.com/jiawei.cjw/dnd.git" target="_blank">View the Project</a>
+        <ul id="navigation" role="navigation">
+          <li><a href="../">文档</a></li>
+          <li><a href="index.html">演示</a></li>
+          <li><a class="test-link" href="../tests/runner.html" target="_blank">用例</a></li>
+          <li><a class="issue-link" href="" target="_blank">讨论</a></li>
+        </ul>
+        
+<div id="output-card">
+    <h3>arale/dnd/1.0.0/<a target="_blank" id="output-file"></a></h3>
+    <p>这是模块的输出文件，请 require 或 seajs.use 以上 ID 来使用本文件，具体 API 请阅读文档。</p>
+</div>
+
+      </aside>
+      <div id="content-wrapper">
+        <div id="content">
+<article class="hentry">
+  <h1 class="entry-title">演示文档</h1>
+  <div class="entry-content">
+    <style>
+    .container {width:500px; height:200px; background:#CCC;}
+    .drag {width:50px; height:50px; background:#07B1EE;}
+    .over {border: 2px dashed #000;}
+</style>
+
+
+<h2 id="1-带有边界的拖拽">1. 带有边界的拖拽<a href="#1-带有边界的拖拽" class="anchor">¶</a></h2><p><div id="container1" class="container">
+    <div id="div1" class="drag"></div>
+</div></p>
+<script>seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+    var dnd = new Dnd('#div1', {containment: '#container1'}) ;
+});</script><div class="highlight"><pre><code class="javascript">seajs.use([<span class="string">'arale/dnd/1.0.0/dnd'</span>, <span class="string">'$'</span>], <span class="keyword">function</span>(Dnd, $){
+    <span class="keyword">var</span> dnd = <span class="keyword">new</span> Dnd(<span class="string">'#div1'</span>, {containment: <span class="string">'#container1'</span>}) ;
+});</code></pre></div><h2 id="2-带有边界和方向的拖拽">2. 带有边界和方向的拖拽<a href="#2-带有边界和方向的拖拽" class="anchor">¶</a></h2><p><div id="container2" class="container">
+    <div id="div2" class="drag"></div>
+</div></p>
+<script>seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+    var dnd = new Dnd('#div2', {containment: '#container2', axis: 'x'}) ;
+});</script><div class="highlight"><pre><code class="javascript">seajs.use([<span class="string">'arale/dnd/1.0.0/dnd'</span>, <span class="string">'$'</span>], <span class="keyword">function</span>(Dnd, $){
+    <span class="keyword">var</span> dnd = <span class="keyword">new</span> Dnd(<span class="string">'#div2'</span>, {containment: <span class="string">'#container2'</span>, axis: <span class="string">'x'</span>}) ;
+});</code></pre></div><h2 id="3-带有返回且源节点不移动的拖拽">3. 带有返回且源节点不移动的拖拽<a href="#3-带有返回且源节点不移动的拖拽" class="anchor">¶</a></h2><p><div id="container3" class="container">
+    <div id="div3" class="drag"></div>
+</div></p>
+<script>seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+    var dnd = new Dnd('#div3', {containment: '#container3', revert: true, revertDuration: 600, visible: true}) ;
+});</script><div class="highlight"><pre><code class="javascript">seajs.use([<span class="string">'arale/dnd/1.0.0/dnd'</span>, <span class="string">'$'</span>], <span class="keyword">function</span>(Dnd, $){
+    <span class="keyword">var</span> dnd = <span class="keyword">new</span> Dnd(<span class="string">'#div3'</span>, {containment: <span class="string">'#container3'</span>, revert: <span class="literal">true</span>, revertDuration: <span class="number">600</span>, visible: <span class="literal">true</span>}) ;
+});</code></pre></div><h2 id="4-带有放置元素的拖放">4. 带有放置元素的拖放<a href="#4-带有放置元素的拖放" class="anchor">¶</a></h2><p><div id="div4" class="drag"></div></p>
+<p><div id="drop1" class="container"></div></p>
+<script>seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+    var dnd = new Dnd('#div4', {drop: '#drop1'}) ;
+});</script><div class="highlight"><pre><code class="javascript">seajs.use([<span class="string">'arale/dnd/1.0.0/dnd'</span>, <span class="string">'$'</span>], <span class="keyword">function</span>(Dnd, $){
+    <span class="keyword">var</span> dnd = <span class="keyword">new</span> Dnd(<span class="string">'#div4'</span>, {drop: <span class="string">'#drop1'</span>}) ;
+});</code></pre></div><h2 id="5-带有处理事件的拖放">5. 带有处理事件的拖放<a href="#5-带有处理事件的拖放" class="anchor">¶</a></h2><p><div id="div5" class="drag"></div></p>
+<p><div id="drop2" class="container"></div></p>
+<script>seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+    var dnd = new Dnd('#div5', {drop: '#drop2'}) ;
+
+    // dataTransfer为拖放数据，传输信息
+    dnd.on('dragstart', function(dataTransfer, dragging, dropping){
+        dataTransfer.data = 'cjw replace' ;
+    })
+    dnd.on('dragenter', function(dragging, dropping){
+        dropping.addClass('over') ;
+    })
+    dnd.on('dragleave', function(dragging, dropping){
+        dropping.removeClass('over') ;
+    })
+    dnd.on('drop', function(dataTransfer, dragging, dropping){
+        if(!$.isEmptyObject(dataTransfer) && typeof(dataTransfer.data) !== 'undefined'){
+            dropping.text(dataTransfer.data) ;
+        }
+    })
+    dnd.on('dragend', function(dragging, dropping){
+        if(dropping) dropping.removeClass('over') ;
+    })
+});</script><div class="highlight"><pre><code class="javascript">seajs.use([<span class="string">'arale/dnd/1.0.0/dnd'</span>, <span class="string">'$'</span>], <span class="keyword">function</span>(Dnd, $){
+    <span class="keyword">var</span> dnd = <span class="keyword">new</span> Dnd(<span class="string">'#div5'</span>, {drop: <span class="string">'#drop2'</span>}) ;
+
+    <span class="comment">// dataTransfer为拖放数据，传输信息</span>
+    dnd.on(<span class="string">'dragstart'</span>, <span class="keyword">function</span>(dataTransfer, dragging, dropping){
+        dataTransfer.data = <span class="string">'cjw replace'</span> ;
+    })
+    dnd.on(<span class="string">'dragenter'</span>, <span class="keyword">function</span>(dragging, dropping){
+        dropping.addClass(<span class="string">'over'</span>) ;
+    })
+    dnd.on(<span class="string">'dragleave'</span>, <span class="keyword">function</span>(dragging, dropping){
+        dropping.removeClass(<span class="string">'over'</span>) ;
+    })
+    dnd.on(<span class="string">'drop'</span>, <span class="keyword">function</span>(dataTransfer, dragging, dropping){
+        <span class="keyword">if</span>(!$.isEmptyObject(dataTransfer) &amp;&amp; <span class="keyword">typeof</span>(dataTransfer.data) !== <span class="string">'undefined'</span>){
+            dropping.text(dataTransfer.data) ;
+        }
+    })
+    dnd.on(<span class="string">'dragend'</span>, <span class="keyword">function</span>(dragging, dropping){
+        <span class="keyword">if</span>(dropping) dropping.removeClass(<span class="string">'over'</span>) ;
+    })
+});</code></pre></div>
+  </div>
+</article>
+</div>
+      </div>
+      
+    </div>
+    <div id="footer-wrapper">
+      <footer>
+        <p class="powered"><a href="http://aralejs.org">Arale</a> •
+<a href="http://aliceui.org">Alice</a> •
+<a href="http://seajs.org">Sea.js</a> •
+<a href="https://spmjs.org">spmjs.org</a> •
+<a href="http://lab.lepture.com/nico/">nico</a>
+        </p>
+      </footer>
+    </div>
+  </body>
+</html>

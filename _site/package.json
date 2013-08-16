@@ -1,0 +1,26 @@
+{
+  "family": "arale",
+  "name": "dnd",
+  "version": "1.0.0",
+  "description": "drag and drop",
+  "homepage": "http://gitlab.alibaba-inc.com/jiawei.cjw/dnd",
+  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git://gitlab.alibaba-inc.com/jiawei.cjw/dnd.git"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "keywords": [],
+  "licenses": "MIT",
+  "spm": {
+    "output": ["dnd.js"],
+    "alias": {
+    	"$": "$",
+		"base": "arale/base/1.1.1/base"
+    },
+    "devAlias": {},
+    "engines": {}
+  }
+}
