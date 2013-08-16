@@ -1,12 +1,125 @@
-# dnd
+# Dnd
 
 ---
 
-// description
+
 
 ---
 
-## 使用说明
+## 配置说明
+
+### element    element|string
+可拖放的元素，即源节点
+>注：非法时抛出异常，其他config参数非法时将自动取默认值
+
+### containment    element|string|null
+拖放的边界，只能设置一个，默认null为无边界 
+>注：element初始必须要位于containment的内部，否则将默认为null
+
+### axis   'x'|'y'|false
+拖放指定的方向，默认false为任意方向
+
+### visible    boolean
+被拖放的元素在源位置上是否可见，默认false为不可见
+
+### proxy    element|string|null
+代理元素，实际上跟随鼠标移动的元素，默认null为元素的clone
+
+### drop    element|string|null
+放置元素，可以不止一个，默认null为无
+
+### revert    boolean
+是否返回源位置，默认false为不返回
+>注：当drop不为null并且没有在drop元素上释放鼠标，将返回源位置，与revert无关
+
+### revertDuration    number
+返回速度，默认为500
+
+### disabled    boolean
+是否禁止该元素拖放，默认false为不禁止
+
+### dragCursor    string
+拖放过程中没进入放置元素drop时光标形状，默认为"move"
+
+### dropCursor    string
+拖放过程中进入放置元素drop时光标的形状，默认为"copy"
 
 
 ## API
+
+### set(option, value)
+设置配置属性，element不能设置
+>注：一切set设置应在拖放前
+
+### get(option)
+获取配置属性
+
+## 事件
+
+### dragstart  (dataTransfer, dragging, dropping)
+拖放开始时触发（按下鼠标并且至少移动1px），常用来设置拖放数据dataTransfer
+>注：(dataTransfer, dragging, dropping)为处理函数参数；dropping为空，此处为保持参数一致
+	
+### drag (dragging, dropping)
+拖放中一直触发，直到鼠标释放
+>注：dropping有可能为空
+
+### dragenter (dragging, dropping)
+鼠标刚进入drop元素中触发
+
+### dragover (dragging, dropping)
+鼠标在drop元素中移动一直触发
+
+### dragleave (dragging, dropping)
+鼠标刚离开drop元素中触发
+>注：dropping为离开的drop元素
+
+### drop (dataTransfer, dragging, dropping)
+鼠标在drop元素中释放时触发，读取dataTransfer值
+
+### dragend (dragging, dropping)
+拖放结束后触发
+>注：当没触发drop时，dropping为null
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

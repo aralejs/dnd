@@ -11,8 +11,8 @@ define(function(require, exports, module){
 		dropping = null,  // 标识当前的目标元素
 		diffX = 0,
 		diffY = 0,   // diffX, diffY记录鼠标离拖拽元素的距离
-		obj = null,  // 存储当前拖放的Dnd instance
-		dataTransfer = {} ; // 存储拖放信息 在dragstart可设置 在drop中可读取
+		obj = null,  // 存储当前拖放的dnd instance
+		dataTransfer = {}, // 存储拖放信息 在dragstart可设置 在drop中可读取
 	
 	// constructor function
 	Dnd = Base.extend({
@@ -30,8 +30,7 @@ define(function(require, exports, module){
 			revertDuration: 500,
 			disabled: false,
 			dragCursor: 'move',
-			dropCursor: 'copy',
-			dataTransfer: null
+			dropCursor: 'copy'
 		}, 
 		initialize: function(elem, config){
 			// 检查参数合法性
@@ -117,10 +116,10 @@ define(function(require, exports, module){
 	
 	// 设置proxy, container, drop, diff
 	function executeDragPre(){
-		// 设置代理元素proxy并且插入DOM
+		// 设置代理元素proxy并且插入DOM   proxy插入DOM若放在movemove中处理会产生抖动
 		if(obj.get('proxy') === null){
 			obj.set('proxy', obj.get('element').clone()) ;
-		} 
+		}
 		else{
 			obj.set('proxy', $(obj.get('proxy'))) ;
 		}
@@ -132,9 +131,6 @@ define(function(require, exports, module){
 		proxy.css('top', obj.get('element').offset().top) ;
 		proxy.css('visibility', 'hidden') ;
 		proxy.appendTo('body') ;
-		// 设置container, drop
-		obj.set('containment', obj.get('containment') === null ? null : $(obj.get('containment'))) ;
-		obj.set('drop', obj.get('drop') === null ? null : $(obj.get('drop'))) ;
 		// 记录点击距源节点距离
 		diffX = event.pageX - obj.get('element').offset().left ;
 		diffY = event.pageY - obj.get('element').offset().top ;
@@ -145,15 +141,19 @@ define(function(require, exports, module){
 	// 开始拖放, 设置dragging
 	function executeDragStart(){
 		if(draggingPre !== false){
-			dragging = obj.get('proxy') ;
+			// 设置container, drop
+			obj.set('containment', obj.get('containment') === null ? null : $(obj.get('containment'))) ;
+			obj.set('drop', obj.get('drop') === null ? null : $(obj.get('drop'))) ;
+			// 按照设置显示或隐藏
 			if(!obj.get('visible')){
 				obj.get('element').css('visibility', 'hidden') ;
 			}
 			obj.get('proxy').css('visibility', 'visible') ;
-			draggingPre = false ;
-			// 先设置dataTransfer为Dnd instance设置的dataTransfer
+			// 设置dataTransfer
 			dataTransfer = {} ;
-			dataTransfer = $.extend(dataTransfer, obj.get('dataTransfer')) ;
+			// 设置dragging为proxy
+			draggingPre = false ;
+			dragging = obj.get('proxy') ;
 			// 触发拖放开始
 			obj.trigger('dragstart', dataTransfer, dragging, dropping) ;
 		}
