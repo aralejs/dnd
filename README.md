@@ -54,6 +54,13 @@
 ### get(option)
 获取配置属性
 
+### open()
+开启页面的拖放功能，
+>注：默认use dnd组件就自动open了
+
+### close()
+关闭页面的拖放功能
+
 ## 事件
 
 ### dragstart  (dataTransfer, dragging, dropping)
