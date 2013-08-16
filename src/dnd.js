@@ -75,7 +75,7 @@ define(function(require, exports, module){
 					// 源节点设置不允许拖放
 					if(obj.get('disabled') === true) return ;
 					// 设置proxy, container, drop, diff
-					executeDragPre() ;
+					executeDragPre({pageX: event.pageX, pageY: event.pageY}) ;
 					// 阻止默认光标
 					event.preventDefault();
 				}
@@ -115,7 +115,7 @@ define(function(require, exports, module){
 	}
 	
 	// 设置proxy, container, drop, diff
-	function executeDragPre(){
+	function executeDragPre(event){
 		// 设置代理元素proxy并且插入DOM   proxy插入DOM若放在movemove中处理会产生抖动
 		if(obj.get('proxy') === null){
 			obj.set('proxy', obj.get('element').clone()) ;
