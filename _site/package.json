@@ -3,16 +3,16 @@
   "name": "dnd",
   "version": "1.0.0",
   "description": "drag and drop",
-  "homepage": "http://gitlab.alibaba-inc.com/jiawei.cjw/dnd",
-  "author": "",
+  "homepage": "https://github.com/aralejs/dnd",
+  "author": "叁儿",
   "repository": {
     "type": "git",
-    "url": "git://gitlab.alibaba-inc.com/jiawei.cjw/dnd.git"
+    "url": "https://github.com/aralejs/dnd.git"
   },
   "bugs": {
-    "url": ""
+    "url": "https://github.com/aralejs/dnd/issues"
   },
-  "keywords": [],
+  "keywords": ["widget"],
   "licenses": "MIT",
   "spm": {
     "output": ["dnd.js"],
