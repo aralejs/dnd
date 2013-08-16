@@ -119,6 +119,7 @@ define(function(require, exports, module){
 		// 设置代理元素proxy并且插入DOM   proxy插入DOM若放在movemove中处理会产生抖动
 		if(obj.get('proxy') === null){
 			obj.set('proxy', obj.get('element').clone()) ;
+			obj.get('proxy').removeAttr('id') ;
 		}
 		else{
 			obj.set('proxy', $(obj.get('proxy'))) ;
