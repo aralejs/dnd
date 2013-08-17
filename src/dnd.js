@@ -77,7 +77,7 @@ define(function(require, exports, module){
 					// 设置proxy, container, drop, diff
 					executeDragPre({pageX: event.pageX, pageY: event.pageY}) ;
 					// 阻止默认光标
-					event.preventDefault();
+					event.preventDefault() ;
 				}
 				break ;
 			
@@ -89,6 +89,8 @@ define(function(require, exports, module){
 					executeDrag({pageX: event.pageX, pageY: event.pageY}) ;
 					// 根据dragging来判断要dragenter和dragleave并执行 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
 					executeDragEnterLeave() ;
+					// 阻止默认光标
+					event.preventDefault() ;
 				}
 				break ;
 			
@@ -126,7 +128,6 @@ define(function(require, exports, module){
 		var proxy = obj.get('proxy') ;
 		proxy.css('position', 'absolute') ;
 		proxy.css('margin', '0') ;
-		proxy.css('cursor', obj.get('dragCursor')) ;
 		proxy.css('left', obj.get('element').offset().left) ;
 		proxy.css('top', obj.get('element').offset().top) ;
 		proxy.css('visibility', 'hidden') ;
@@ -149,6 +150,7 @@ define(function(require, exports, module){
 				obj.get('element').css('visibility', 'hidden') ;
 			}
 			obj.get('proxy').css('visibility', 'visible') ;
+			obj.get('proxy').css('cursor', obj.get('dragCursor')) ;
 			// 设置dataTransfer
 			dataTransfer = {} ;
 			// 设置dragging为proxy
@@ -229,6 +231,7 @@ define(function(require, exports, module){
 				xdragging.css('left', dropping.offset().left + (dropping.innerWidth() - xdragging.outerWidth()) / 2) ;
 				xdragging.css('top', dropping.offset().top + (dropping.innerHeight() - xdragging.outerHeight()) / 2) ;
 			}
+			// 此处传递的dragging为源节点element，因为后面的revert中要移除proxy，有待商榷
 			obj.trigger('drop', dataTransfer, obj.get('element'), dropping) ;
 		}
 	}
