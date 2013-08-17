@@ -43,23 +43,23 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 });
 ````
 
-## 4. 带有返回和放置元素的拖放
+## 4. 带有放置元素的拖放
 
 <div id="div4" class="drag"></div>
 <div id="drop1" class="container"></div>
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
-	var dnd = new Dnd('#div4', {drop: '#drop1', revert: true}) ;
+	var dnd = new Dnd('#div4', {drop: '#drop1'}) ;
 });
 ````
 
-## 5. 带有处理事件的拖放
+## 5. 带有返回和处理事件的拖放
 
 <div id="div5" class="drag"></div>
 <div id="drop2" class="container"></div>
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
-	var dnd = new Dnd('#div5', {drop: '#drop2'}) ;
+	var dnd = new Dnd('#div5', {drop: '#drop2', revert: true}) ;
 	
 	// dataTransfer为拖放数据，传输信息
 	dnd.on('dragstart', function(dataTransfer, dragging, dropping){
