@@ -76,7 +76,7 @@ define(function(require, exports, module){
 					if(obj.get('disabled') === true) return ;
 					// 设置proxy, diff, 并设置draggingPre为true
 					executeDragPre({pageX: event.pageX, pageY: event.pageY}) ;
-					// 阻止默认光标
+					// 阻止默认光标和选中文本
 					event.preventDefault() ;
 				}
 				break ;
@@ -90,7 +90,7 @@ define(function(require, exports, module){
 					// 根据dragging来判断要dragenter和dragleave并执行 
 					// 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
 					executeDragEnterLeave() ;
-					// 阻止默认光标
+					// 阻止默认光标和选中文本
 					event.preventDefault() ;
 				}
 				break ;
