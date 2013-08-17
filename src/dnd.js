@@ -63,7 +63,7 @@ define(function(require, exports, module){
 	}) ;
 	
 	
-	/*---------------------------------static private function----------------------------------------------------------*/
+	/*---------------------------------static private function------------------------------------------------*/
 	// 核心部分，处理鼠标事件，实现拖放逻辑
 	function handleDragEvent(event){
 		switch(event.type){
@@ -74,7 +74,7 @@ define(function(require, exports, module){
 					obj = $(event.target).data('dnd') ;
 					// 源节点设置不允许拖放
 					if(obj.get('disabled') === true) return ;
-					// 设置proxy, container, drop, diff
+					// 设置proxy, diff, 并设置draggingPre为true
 					executeDragPre({pageX: event.pageX, pageY: event.pageY}) ;
 					// 阻止默认光标
 					event.preventDefault() ;
@@ -82,12 +82,13 @@ define(function(require, exports, module){
 				break ;
 			
 			case 'mousemove':
-				// 开始拖放, 设置dragging
+				// 开始拖放, 设置dragging, 并reset draggingPre为false
 				executeDragStart() ;
-				if(dragging){
+				if(dragging !== null){
 					// 根据边界和方向一起判断是否drag并执行
 					executeDrag({pageX: event.pageX, pageY: event.pageY}) ;
-					// 根据dragging来判断要dragenter和dragleave并执行 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
+					// 根据dragging来判断要dragenter和dragleave并执行 
+					// 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
 					executeDragEnterLeave() ;
 					// 阻止默认光标
 					event.preventDefault() ;
@@ -95,7 +96,7 @@ define(function(require, exports, module){
 				break ;
 			
 			case 'mouseup':
-				if(dragging){
+				if(dragging !== null){
 					// 设置dragging为null 防止处理drop时mousemove
 					dragging = null ;
 					// 根据dropping判断是否drop并执行
@@ -106,7 +107,7 @@ define(function(require, exports, module){
 					obj.trigger('dragend', obj.get('element'), dropping) ;
 					dropping = null ;
 				}
-				else if(draggingPre){    
+				else if(draggingPre === true){    
 					// 点击而非拖拽时
 					obj.get('element').css('visibility', 'visible') ;
 					obj.get('proxy').remove() ;
@@ -116,7 +117,7 @@ define(function(require, exports, module){
 		}
 	}
 	
-	// 设置proxy, container, drop, diff
+	// 设置proxy, diff, 并设置draggingPre为true
 	function executeDragPre(event){
 		// 设置代理元素proxy并且插入DOM   proxy插入DOM若放在movemove中处理会产生抖动
 		if(obj.get('proxy') === null){
@@ -139,7 +140,7 @@ define(function(require, exports, module){
 		draggingPre = true ;
 	}
 	
-	// 开始拖放, 设置dragging
+	// 开始拖放, 设置dragging, 并reset draggingPre为false
 	function executeDragStart(){
 		if(draggingPre !== false){
 			// 设置container, drop
@@ -166,7 +167,7 @@ define(function(require, exports, module){
 		var container = obj.get('containment') ;
 		if(obj.get('axis') !== 'y'){
 			if(container === null || 
-				isContain(container, event.pageX - diffX, dragging.offset().top, dragging.outerWidth(), dragging.outerHeight())){
+			   isContain(container, event.pageX - diffX, dragging.offset().top, dragging.outerWidth(), dragging.outerHeight())){
 				dragging.css('left', event.pageX - diffX) ;
 			}
 			else{
@@ -180,7 +181,7 @@ define(function(require, exports, module){
 		}
 		if(obj.get('axis') !== 'x'){
 			if(container === null || 
-				isContain(container, dragging.offset().left, event.pageY - diffY, dragging.outerWidth(), dragging.outerHeight())){
+			   isContain(container, dragging.offset().left, event.pageY - diffY, dragging.outerWidth(), dragging.outerHeight())){
 				dragging.css('top', event.pageY - diffY) ;
 			}
 			else{
@@ -202,7 +203,7 @@ define(function(require, exports, module){
 				$.each(obj.get('drop'), function(index, elem){
 					// 注意检测drop不是elem或者proxy本身
 					if(elem !== obj.get('element').get(0) && elem !== dragging.get(0) && 
-						isContain(elem, dragging.offset().left + diffX, dragging.offset().top + diffY)){
+					   isContain(elem, dragging.offset().left + diffX, dragging.offset().top + diffY)){
 						dropping = $(elem) ;
 						dragging.css('cursor', obj.get('dropCursor')) ;
 						obj.trigger('dragenter', dragging, dropping) ;
@@ -228,8 +229,9 @@ define(function(require, exports, module){
 		var xdragging = obj.get('proxy') ;
 		// 恢复光标
 		xdragging.css('cursor', 'default') ;
-		if(dropping){
-			if(!isContain(dropping, xdragging)){
+		if(dropping !== null){
+			// 放置时不完全在drop中并且不需要返回的放置中央
+			if(!isContain(dropping, xdragging) && obj.get('revert') === false){
 				xdragging.css('left', dropping.offset().left + (dropping.innerWidth() - xdragging.outerWidth()) / 2) ;
 				xdragging.css('top', dropping.offset().top + (dropping.innerHeight() - xdragging.outerHeight()) / 2) ;
 			}
@@ -243,7 +245,7 @@ define(function(require, exports, module){
 		var xdragging = obj.get('proxy') ;
 		var xleft = 0, xtop = 0 ;
 		// 是否返回
-		if(obj.get('revert') || (dropping === null && obj.get('drop') !== null)){ 
+		if(obj.get('revert') === true || (dropping === null && obj.get('drop') !== null)){ 
 			// 代理元素返回源节点处
 			if(typeof(obj.get('element').data('drag-left')) !== 'undefined'){
 				xleft = obj.get('element').data('drag-left') ;
@@ -256,7 +258,7 @@ define(function(require, exports, module){
 			obj.get('element').css('left', xleft) ;
 			obj.get('element').css('top', xtop) ;
 			xdragging.animate({left: obj.get('element').offset().left, top: obj.get('element').offset().top}, 
-				obj.get('revertDuration'), function(){
+				              obj.get('revertDuration'), function(){
 				// 删除代理元素 显示源节点
 				obj.get('element').css('visibility', 'visible') ;
 				xdragging.remove() ;
@@ -268,9 +270,9 @@ define(function(require, exports, module){
 			xtop = xdragging.offset().top - obj.get('element').offset().top ;
 			if(obj.get('element').css('position') === 'relative'){
 				obj.get('element').css('left', (isNaN(parseInt(obj.get('element').css('left'))) ? 0 : 
-				parseInt(obj.get('element').css('left'))) + xleft) ;
+						               parseInt(obj.get('element').css('left'))) + xleft) ;
 				obj.get('element').css('top', (isNaN(parseInt(obj.get('element').css('top'))) ? 0 : 
-				parseInt(obj.get('element').css('top'))) + xtop) ;
+						               parseInt(obj.get('element').css('top'))) + xtop) ;
 			}
 			else{
 				obj.get('element').css('position', 'relative') ;
@@ -284,8 +286,8 @@ define(function(require, exports, module){
 	}
 	
 	
-	/*---------------------------------------------some useful static private function----------------------------------*/
-	// 判断点元素B是否位于元素A内部 or 点(B, C)是否位于A内 or (B, C) width=D, height=F是否位于A内  1.5是为了补全浏览器间的浮点数差异
+	/*-----------------------------------------some useful static private function----------------------------*/
+	// 判断点元素B是否位于元素A内部or点(B, C)是否位于A内or(B, C)width=D,height=F是否位于A内 1.5是为了补全浏览器间的浮点数差异
 	function isContain(A, B, C, D, F){
 		var x = 0, y = 0, width = 0, height = 0;
 		if(arguments.length == 2){
@@ -315,9 +317,9 @@ define(function(require, exports, module){
 		for(option in config){
 			switch(option){
 				case 'containment':
-					// containment不能为element本身 element也不能不在containment内
-					if($(config.containment).size() === 0 || $(config.containment).get(0) === $(elem).get(0)
-						|| !isContain($(config.containment).eq(0), $(elem))){
+					// containment不能为element本身 element也不能在containment外
+					if($(config.containment).size() === 0 || $(config.containment).get(0) === $(elem).get(0) ||
+					   !isContain($(config.containment).eq(0), $(elem))){
 						config.containment = null ;
 					}
 					break ;
@@ -332,8 +334,9 @@ define(function(require, exports, module){
 					}
 					break ;
 				case 'proxy':
-					// proxy不能为element本身
-					if($(config.proxy).size() === 0 || $(config.proxy).get(0) === $(elem).get(0)){
+					// proxy不能为element本身, 也不能为containment
+					if($(config.proxy).size() === 0 || $(config.proxy).get(0) === $(elem).get(0) ||
+					   $(config.proxy).get(0) === $(config.containment).get(0)){
 						config.proxy = null ;
 					}
 					break ;

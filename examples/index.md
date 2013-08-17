@@ -2,7 +2,6 @@
 
 ---
 
-
 <style>
 	.container {width:500px; height:200px; background:#CCC;}
 	.drag {width:50px; height:50px; background:#07B1EE;}
