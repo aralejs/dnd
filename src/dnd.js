@@ -34,8 +34,10 @@ define(function(require, exports, module){
 		}, 
 		
 		initialize: function(elem, config){
-			// 检查参数合法性
-			handleArgument(elem, config) ;
+			// 检查elem合法性
+			if($(elem).size() === 0){
+				throw new Error('element error!') ;
+			}
 			config = $.extend(config, {element: $(elem).eq(0)}) ;
 			Dnd.superclass.initialize.call(this, config) ;
 			// 如果元素原始是relative 记录下left和top
@@ -74,9 +76,9 @@ define(function(require, exports, module){
 					obj = $(event.target).data('dnd') ;
 					// 源节点设置不允许拖放
 					if(obj.get('disabled') === true) return ;
-					// 设置proxy, diff, 并设置draggingPre为true
+					// 处理属性合法性, 设置diff, 并设置draggingPre为true
 					executeDragPre({pageX: event.pageX, pageY: event.pageY}) ;
-					// 阻止默认光标和选中文本
+					// 阻止 默认光标和选中文本
 					event.preventDefault() ;
 				}
 				break ;
@@ -90,7 +92,7 @@ define(function(require, exports, module){
 					// 根据dragging来判断要dragenter和dragleave并执行 
 					// 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
 					executeDragEnterLeave() ;
-					// 阻止默认光标和选中文本
+					// 阻止 默认光标和选中文本
 					event.preventDefault() ;
 				}
 				break ;
@@ -117,22 +119,10 @@ define(function(require, exports, module){
 		}
 	}
 	
-	// 设置proxy, diff, 并设置draggingPre为true
+	// 处理属性合法性, 设置diff, 并设置draggingPre为true
 	function executeDragPre(event){
-		// 设置代理元素proxy并且插入DOM   proxy插入DOM若放在movemove中处理会产生抖动
-		if(obj.get('proxy') === null){
-			obj.set('proxy', obj.get('element').clone()) ;
-		}
-		else{
-			obj.set('proxy', $(obj.get('proxy')).eq(0)) ;
-		}
-		var proxy = obj.get('proxy') ;
-		proxy.css('position', 'absolute') ;
-		proxy.css('margin', '0') ;
-		proxy.css('left', obj.get('element').offset().left) ;
-		proxy.css('top', obj.get('element').offset().top) ;
-		proxy.css('visibility', 'hidden') ;
-		proxy.appendTo('body') ;
+		// 处理属性合法性
+		handleAttr() ;
 		// 记录点击距源节点距离
 		diffX = event.pageX - obj.get('element').offset().left ;
 		diffY = event.pageY - obj.get('element').offset().top ;
@@ -143,11 +133,8 @@ define(function(require, exports, module){
 	// 开始拖放, 设置dragging, 并reset draggingPre为false
 	function executeDragStart(){
 		if(draggingPre !== false){
-			// 设置container, drop
-			obj.set('containment', obj.get('containment') === null ? null : $(obj.get('containment')).eq(0)) ;
-			obj.set('drop', obj.get('drop') === null ? null : $(obj.get('drop'))) ;
 			// 按照设置显示或隐藏
-			if(!obj.get('visible')){
+			if(obj.get('visible') === false){
 				obj.get('element').css('visibility', 'hidden') ;
 			}
 			obj.get('proxy').css('visibility', 'visible') ;
@@ -201,7 +188,7 @@ define(function(require, exports, module){
 		if(obj.get('drop') !== null){
 			if(dropping === null){
 				$.each(obj.get('drop'), function(index, elem){
-					// 注意检测drop不是elem或者proxy本身
+					// 注意检测drop不是element或者proxy本身
 					if(elem !== obj.get('element').get(0) && elem !== dragging.get(0) && 
 					   isContain(elem, dragging.offset().left + diffX, dragging.offset().top + diffY)){
 						dropping = $(elem) ;
@@ -309,65 +296,83 @@ define(function(require, exports, module){
 		}
 	}
 	
-	// 检查参数合法性
-	function handleArgument(elem, config){
-		if($(elem).size() === 0){
-			throw new Error('element error!') ;
-		}
-		for(option in config){
-			switch(option){
+	// 处理属性合法性
+	function handleAttr(){	
+		var attr = '', 
+			element = obj.get('element'), 
+			value = null ;
+		for(attr in obj.attrs){
+			value = obj.get(attr) ;
+			switch(attr){
 				case 'containment':
 					// containment不能为element本身 element也不能在containment外
-					if($(config.containment).size() === 0 || $(config.containment).get(0) === $(elem).get(0) ||
-					   !isContain($(config.containment).eq(0), $(elem))){
-						config.containment = null ;
+					if($(value).size() === 0 || $(value).get(0) === element.get(0) ||
+					   !isContain($(value).eq(0), element)){
+						obj.set('containment', null) ;
+					}
+					else{
+						obj.set('containment', $(obj.get('containment')).eq(0)) ;
 					}
 					break ;
 				case 'axis':
-					if(config.axis !== 'x' && config.axis !== 'y' && config.axis !== false){
-						config.axis = false ;
+					if(value !== 'x' && value !== 'y' && value !== false){
+						obj.set('axis', false) ;
 					}
 					break ;
 				case 'visible':
-					if(typeof(config.visible) !== 'boolean'){
-						config.visible = false ;
+					if(typeof(value) !== 'boolean'){
+						obj.set('visible', false) ;
 					}
 					break ;
 				case 'proxy':
 					// proxy不能为element本身, 也不能为containment
-					if($(config.proxy).size() === 0 || $(config.proxy).get(0) === $(elem).get(0) ||
-					   $(config.proxy).get(0) === $(config.containment).get(0)){
-						config.proxy = null ;
+					// 只要不设置proxy，proxy只需clone一次
+					if($(value).size() === 0 || $(value).get(0) === element.get(0) ||
+					   $(value).get(0) === $(obj.get('containment')).get(0)){
+						obj.set('proxy', obj.get('element').clone()) ;
 					}
+					else{
+						obj.set('proxy', $(obj.get('proxy')).eq(0)) ;
+					}
+					var proxy = obj.get('proxy') ;
+					proxy.css('position', 'absolute') ;
+					proxy.css('margin', '0') ;
+					proxy.css('left', obj.get('element').offset().left) ;
+					proxy.css('top', obj.get('element').offset().top) ;
+					proxy.css('visibility', 'hidden') ;
+					proxy.appendTo('body') ;
 					break ;
 				case 'drop':
-					if($(config.drop).size() === 0){
-						config.drop = null ;
+					if($(value).size() === 0){
+						obj.set('drop', null) ;
+					}
+					else{
+						obj.set('drop', $(obj.get('drop'))) ;
 					}
 					break ;
 				case 'revert':
-					if(typeof(config.revert) !== 'boolean'){
-						config.revert = false ;
+					if(typeof(value) !== 'boolean'){
+						obj.set('revert', false) ;
 					}
 					break ;
 				case 'revertDuration':
-					if(typeof(config.revertDuration) !== 'number'){
-						config.revertDuration = 500 ;
+					if(typeof(value) !== 'number'){
+						obj.set('revertDuration', 500) ;
 					}
 					break ;
 				case 'disabled':
-					if(typeof(config.disabled) !== 'boolean'){
-						config.disabled = false ;
+					if(typeof(value) !== 'boolean'){
+						obj.set('disabled', false) ;
 					}
 					break ;
 				case 'dragCursor':
-					if(typeof(config.dragCursor) !== 'string'){
-						config.dragCursor = 'move' ;
+					if(typeof(value) !== 'string'){
+						obj.set('dragCursor', 'move') ;
 					}
 					break ;
 				case 'dropCursor':
-					if(typeof(config.dropCursor) !== 'string'){
-						config.dropCursor = 'copy' ;
+					if(typeof(value) !== 'string'){
+						obj.set('dropCursor', 'copy') ;
 					}
 					break ;
 			}
