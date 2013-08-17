@@ -119,10 +119,9 @@ define(function(require, exports, module){
 		// 设置代理元素proxy并且插入DOM   proxy插入DOM若放在movemove中处理会产生抖动
 		if(obj.get('proxy') === null){
 			obj.set('proxy', obj.get('element').clone()) ;
-			obj.get('proxy').removeAttr('id') ;
 		}
 		else{
-			obj.set('proxy', $(obj.get('proxy'))) ;
+			obj.set('proxy', $(obj.get('proxy')).eq(0)) ;
 		}
 		var proxy = obj.get('proxy') ;
 		proxy.css('position', 'absolute') ;
@@ -143,7 +142,7 @@ define(function(require, exports, module){
 	function executeDragStart(){
 		if(draggingPre !== false){
 			// 设置container, drop
-			obj.set('containment', obj.get('containment') === null ? null : $(obj.get('containment'))) ;
+			obj.set('containment', obj.get('containment') === null ? null : $(obj.get('containment')).eq(0)) ;
 			obj.set('drop', obj.get('drop') === null ? null : $(obj.get('drop'))) ;
 			// 按照设置显示或隐藏
 			if(!obj.get('visible')){
@@ -197,7 +196,9 @@ define(function(require, exports, module){
 		if(obj.get('drop') !== null){
 			if(dropping === null){
 				$.each(obj.get('drop'), function(index, elem){
-					if(isContain(elem, dragging.offset().left + diffX, dragging.offset().top + diffY)){
+					// 注意检测drop不是elem或者proxy本身
+					if(elem !== obj.get('element').get(0) && elem !== dragging.get(0) && 
+						isContain(elem, dragging.offset().left + diffX, dragging.offset().top + diffY)){
 						dropping = $(elem) ;
 						dragging.css('cursor', obj.get('dropCursor')) ;
 						obj.trigger('dragenter', dragging, dropping) ;
@@ -305,7 +306,9 @@ define(function(require, exports, module){
 		for(option in config){
 			switch(option){
 				case 'containment':
-					if($(config.containment).size() === 0 || !isContain($(config.containment), $(elem))){
+					// containment不能为element本身 element也不能不在containment内
+					if($(config.containment).size() === 0 || $(config.containment).get(0) === $(elem).get(0)
+						|| !isContain($(config.containment).eq(0), $(elem))){
 						config.containment = null ;
 					}
 					break ;
@@ -320,7 +323,8 @@ define(function(require, exports, module){
 					}
 					break ;
 				case 'proxy':
-					if($(config.proxy).size() === 0){
+					// proxy不能为element本身
+					if($(config.proxy).size() === 0 || $(config.proxy).get(0) === $(elem).get(0)){
 						config.proxy = null ;
 					}
 					break ;
@@ -352,11 +356,6 @@ define(function(require, exports, module){
 				case 'dropCursor':
 					if(typeof(config.dropCursor) !== 'string'){
 						config.dropCursor = 'copy' ;
-					}
-					break ;
-				case 'dataTransfer':
-					if(typeof(config.dataTransfer) !== 'object'){
-						config.dataTransfer = null ;
 					}
 					break ;
 			}
