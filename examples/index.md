@@ -43,13 +43,13 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 });
 ````
 
-## 4. 带有放置元素的拖放
+## 4. 带有返回和放置元素的拖放
 
 <div id="div4" class="drag"></div>
 <div id="drop1" class="container"></div>
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
-	var dnd = new Dnd('#div4', {drop: '#drop1'}) ;
+	var dnd = new Dnd('#div4', {drop: '#drop1', revert: true}) ;
 });
 ````
 
