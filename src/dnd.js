@@ -32,6 +32,7 @@ define(function(require, exports, module){
 			dragCursor: 'move',
 			dropCursor: 'copy'
 		}, 
+		
 		initialize: function(elem, config){
 			// 检查参数合法性
 			handleArgument(elem, config) ;
@@ -44,24 +45,23 @@ define(function(require, exports, module){
 			}
 			// store instance
 			this.get('element').data('dnd', this) ;	
+		},
+		
+		// 开启页面Dnd功能，绑定鼠标事件
+		open: function(){
+			$(document).on('mousedown', handleDragEvent) ;
+			$(document).on('mousemove', handleDragEvent) ;
+			$(document).on('mouseup', handleDragEvent) ;	
+		},
+
+		// 关闭页面Dnd功能，解绑鼠标事件
+		close: function(){
+			$(document).off('mousedown', handleDragEvent) ;
+			$(document).off('mousemove', handleDragEvent) ;
+			$(document).off('mouseup', handleDragEvent) ;
 		}
 	}) ;
 	
-	/*----------------------------------------static public function----------------------------------------------------*/
-	// 开启页面Dnd功能，绑定鼠标事件
-	Dnd.prototype.open = function(){
-		$(document).on('mousedown', handleDragEvent) ;
-		$(document).on('mousemove', handleDragEvent) ;
-		$(document).on('mouseup', handleDragEvent) ;	
-	} ;
-
-
-	// 关闭页面Dnd功能，解绑鼠标事件
-	Dnd.prototype.close = function(){
-		$(document).off('mousedown', handleDragEvent) ;
-		$(document).off('mousemove', handleDragEvent) ;
-		$(document).off('mouseup', handleDragEvent) ;
-	} ;
 	
 	/*---------------------------------static private function----------------------------------------------------------*/
 	// 核心部分，处理鼠标事件，实现拖放逻辑
@@ -165,7 +165,8 @@ define(function(require, exports, module){
 	function executeDrag(event){
 		var container = obj.get('containment') ;
 		if(obj.get('axis') !== 'y'){
-			if(container === null || isContain(container, event.pageX - diffX, dragging.offset().top, dragging.outerWidth(), dragging.outerHeight())){
+			if(container === null || 
+				isContain(container, event.pageX - diffX, dragging.offset().top, dragging.outerWidth(), dragging.outerHeight())){
 				dragging.css('left', event.pageX - diffX) ;
 			}
 			else{
@@ -178,7 +179,8 @@ define(function(require, exports, module){
 			}
 		}
 		if(obj.get('axis') !== 'x'){
-			if(container === null || isContain(container, dragging.offset().left, event.pageY - diffY, dragging.outerWidth(), dragging.outerHeight())){
+			if(container === null || 
+				isContain(container, dragging.offset().left, event.pageY - diffY, dragging.outerWidth(), dragging.outerHeight())){
 				dragging.css('top', event.pageY - diffY) ;
 			}
 			else{
@@ -265,8 +267,10 @@ define(function(require, exports, module){
 			xleft = xdragging.offset().left - obj.get('element').offset().left ;
 			xtop = xdragging.offset().top - obj.get('element').offset().top ;
 			if(obj.get('element').css('position') === 'relative'){
-				obj.get('element').css('left', (isNaN(parseInt(obj.get('element').css('left'))) ? 0 : parseInt(obj.get('element').css('left'))) + xleft) ;
-				obj.get('element').css('top', (isNaN(parseInt(obj.get('element').css('top'))) ? 0 : parseInt(obj.get('element').css('top'))) + xtop) ;
+				obj.get('element').css('left', (isNaN(parseInt(obj.get('element').css('left'))) ? 0 : 
+				parseInt(obj.get('element').css('left'))) + xleft) ;
+				obj.get('element').css('top', (isNaN(parseInt(obj.get('element').css('top'))) ? 0 : 
+				parseInt(obj.get('element').css('top'))) + xtop) ;
 			}
 			else{
 				obj.get('element').css('position', 'relative') ;
@@ -281,23 +285,25 @@ define(function(require, exports, module){
 	
 	
 	/*---------------------------------------------some useful static private function----------------------------------*/
-	// 判断点元素B是否位于元素A内部 or 点(B, C)是否位于A内 or (B, C) width=D, height=F是否位于A内
+	// 判断点元素B是否位于元素A内部 or 点(B, C)是否位于A内 or (B, C) width=D, height=F是否位于A内  1.5是为了补全浏览器间的浮点数差异
 	function isContain(A, B, C, D, F){
 		var x = 0, y = 0, width = 0, height = 0;
 		if(arguments.length == 2){
-			return $(A).offset().left <= $(B).offset().left && $(A).offset().left + $(A).innerWidth() >= $(B).offset().left + $(B).outerWidth() &&
-					$(A).offset().top <= $(B).offset().top && $(A).offset().top + $(A).innerHeight() >= $(B).offset().top + $(B).outerHeight() ;
+			return $(A).offset().left - 1.5 <= $(B).offset().left && 
+					$(A).offset().left + $(A).innerWidth() >= $(B).offset().left + $(B).outerWidth() - 1.5 &&
+					$(A).offset().top - 1.5 <= $(B).offset().top && 
+					$(A).offset().top + $(A).innerHeight() >= $(B).offset().top + $(B).outerHeight() - 1.5 ;
 		}
 		// B, C为点坐标
 		if(arguments.length == 3){  
 			x = B, y = C ;
-			return $(A).offset().left <= x && $(A).offset().left + $(A).innerWidth() >= x &&
-					$(A).offset().top <= y && $(A).offset().top + $(A).innerHeight() >= y ;
+			return $(A).offset().left - 1.5 <= x && $(A).offset().left + $(A).innerWidth() >= x - 1.5 &&
+					$(A).offset().top - 1.5 <= y && $(A).offset().top + $(A).innerHeight() >= y - 1.5 ;
 		}
 		if(arguments.length == 5){
 			x = B, y = C, width = D, height = F ;
-			return $(A).offset().left <= x && $(A).offset().left + $(A).innerWidth() >= x + width &&
-					$(A).offset().top <= y && $(A).offset().top + $(A).innerHeight() >= y + height ;
+			return $(A).offset().left - 1.5 <= x && $(A).offset().left + $(A).innerWidth() >= x + width - 1.5 &&
+					$(A).offset().top - 1.5 <= y && $(A).offset().top + $(A).innerHeight() >= y + height - 1.5 ;
 		}
 	}
 	
