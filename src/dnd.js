@@ -6,13 +6,13 @@ define(function(require, exports, module){
 	var Base = require('base') ;
 	
 	// static private variable(module global varibale)
-	var draggingPre = false,  // 标识预拖拽，鼠标点击可拖拽元素
-		dragging = null,  // 标识当前的拖拽元素
+	var draggingPre = false,  // 标识预拖拽
+		dragging = null,  // 标识当前拖拽的代理元素
 		dropping = null,  // 标识当前的目标元素
 		diffX = 0,
 		diffY = 0,   // diffX, diffY记录鼠标离拖拽元素的距离
-		obj = null,  // 存储当前拖放的dnd instance
-		dataTransfer = {}, // 存储拖放信息 在dragstart可设置 在drop中可读取
+		obj = null,  // 存储当前拖放的dnd
+		dataTransfer = {} ; // 存储拖放信息 在dragstart可设置 在drop中可读取
 	
 	// constructor function
 	Dnd = Base.extend({
@@ -34,10 +34,11 @@ define(function(require, exports, module){
 		}, 
 		
 		initialize: function(elem, config){
-			// 检查elem合法性
+			// 检查源节点elem合法性
 			if($(elem).size() === 0){
 				throw new Error('element error!') ;
 			}
+			if($.isPlainObject(config) === false) config = {} ;
 			config = $.extend(config, {element: $(elem).eq(0)}) ;
 			Dnd.superclass.initialize.call(this, config) ;
 			// 如果元素原始是relative 记录下left和top
@@ -45,8 +46,15 @@ define(function(require, exports, module){
 				this.get('element').data('drag-left', this.get('element').css('left')) ;
 				this.get('element').data('drag-top', this.get('element').css('top')) ;
 			}
-			// store instance
+			// 在源节点上存储dnd
 			this.get('element').data('dnd', this) ;	
+		},
+		
+		// 拖放期间不能设置配置
+		set: function(option, value){
+			if(obj !== this){
+				Dnd.superclass.set.call(this, option, value) ;
+			}
 		},
 		
 		// 开启页面Dnd功能，绑定鼠标事件
@@ -72,25 +80,32 @@ define(function(require, exports, module){
 			case 'mousedown':
 				// 鼠标左键按下并且是可移动元素
 				if(event.which === 1 &&  $(event.target).data('dnd') instanceof Dnd){
-					// 使源节点的信息对象赋给对象obj
-					obj = $(event.target).data('dnd') ;
-					// 源节点设置不允许拖放
-					if(obj.get('disabled') === true) return ;
-					// 处理属性合法性, 设置diff, 并设置draggingPre为true
-					executeDragPre({pageX: event.pageX, pageY: event.pageY}) ;
+					var dnd = $(event.target).data('dnd') ;
+					// 源节点不允许拖放
+					if(dnd.get('disabled') === true) return ;
+					// 处理配置合法性
+					handleConfig(dnd) ;
+					// 使dnd对象赋给对象obj
+					obj = dnd ;
+					// 记录点击距源节点距离
+					diffX = event.pageX - obj.get('element').offset().left ;
+					diffY = event.pageY - obj.get('element').offset().top ;
+					// draggingpre主要是防止用户点击而不是拖拽
+					draggingPre = true ;
 					// 阻止 默认光标和选中文本
 					event.preventDefault() ;
 				}
 				break ;
 			
 			case 'mousemove':
-				// 开始拖放, 设置dragging, 并reset draggingPre为false
-				executeDragStart() ;
+				if(draggingPre !== false){
+					// 开始拖放
+					executeDragStart() ;
+				}
 				if(dragging !== null){
 					// 根据边界和方向一起判断是否drag并执行
 					executeDrag({pageX: event.pageX, pageY: event.pageY}) ;
-					// 根据dragging来判断要dragenter和dragleave并执行 
-					// 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
+					// 根据dragging来判断要dragenter和dragleave并执行
 					executeDragEnterLeave() ;
 					// 阻止 默认光标和选中文本
 					event.preventDefault() ;
@@ -105,48 +120,35 @@ define(function(require, exports, module){
 					executeDrop() ;
 					// 根据revert判断是否要返回并执行(若指定放置元素且没drop则自动回到原处与revert设置无关)
 					executeRevert() ;
-					// 触发dragend
+					// 此处传递的dragging为源节点element
 					obj.trigger('dragend', obj.get('element'), dropping) ;
+					obj = null ;
 					dropping = null ;
 				}
 				else if(draggingPre === true){    
 					// 点击而非拖拽时
-					obj.get('element').css('visibility', 'visible') ;
 					obj.get('proxy').remove() ;
 					draggingPre = false ;
+					obj = null ;
 				}
 				break ;
 		}
 	}
 	
-	// 处理属性合法性, 设置diff, 并设置draggingPre为true
-	function executeDragPre(event){
-		// 处理属性合法性
-		handleAttr() ;
-		// 记录点击距源节点距离
-		diffX = event.pageX - obj.get('element').offset().left ;
-		diffY = event.pageY - obj.get('element').offset().top ;
-		// draggingpre主要是防止用户点击而不是拖拽
-		draggingPre = true ;
-	}
-	
-	// 开始拖放, 设置dragging, 并reset draggingPre为false
+	// 开始拖放
 	function executeDragStart(){
-		if(draggingPre !== false){
-			// 按照设置显示或隐藏
-			if(obj.get('visible') === false){
-				obj.get('element').css('visibility', 'hidden') ;
-			}
-			obj.get('proxy').css('visibility', 'visible') ;
-			obj.get('proxy').css('cursor', obj.get('dragCursor')) ;
-			// 设置dataTransfer
-			dataTransfer = {} ;
-			// 设置dragging为proxy
-			draggingPre = false ;
-			dragging = obj.get('proxy') ;
-			// 触发拖放开始
-			obj.trigger('dragstart', dataTransfer, dragging, dropping) ;
+		// 按照设置显示或隐藏
+		if(obj.get('visible') === false){
+			obj.get('element').css('visibility', 'hidden') ;
 		}
+		obj.get('proxy').css('visibility', 'visible') ;
+		obj.get('proxy').css('cursor', obj.get('dragCursor')) ;
+		// 设置dataTransfer
+		dataTransfer = {} ;
+		// 设置dragging为proxy
+		draggingPre = false ;
+		dragging = obj.get('proxy') ;
+		obj.trigger('dragstart', dataTransfer, dragging, dropping) ;
 	}
 	
 	// 根据边界和方向一起判断是否drag并执行
@@ -183,7 +185,7 @@ define(function(require, exports, module){
 		obj.trigger('drag', dragging, dropping) ;
 	}
 	
-	// 根据dragging来判断要dragenter和dragleave并执行 不能用event.pageX因为要防止源节点受边界或方向限制没有被拖动
+	// 根据dragging和dropping来判断要dragenter和dragleave并执行
 	function executeDragEnterLeave(){
 		if(obj.get('drop') !== null){
 			if(dropping === null){
@@ -214,24 +216,24 @@ define(function(require, exports, module){
 	// 根据dropping判断是否drop并执行
 	function executeDrop(){
 		var xdragging = obj.get('proxy') ;
-		// 恢复光标
-		xdragging.css('cursor', 'default') ;
 		if(dropping !== null){
 			// 放置时不完全在drop中并且不需要返回的放置中央
 			if(!isContain(dropping, xdragging) && obj.get('revert') === false){
 				xdragging.css('left', dropping.offset().left + (dropping.innerWidth() - xdragging.outerWidth()) / 2) ;
 				xdragging.css('top', dropping.offset().top + (dropping.innerHeight() - xdragging.outerHeight()) / 2) ;
 			}
-			// 此处传递的dragging为源节点element，因为后面的revert中要移除proxy，有待商榷
+			// 此处传递的dragging为源节点element
 			obj.trigger('drop', dataTransfer, obj.get('element'), dropping) ;
 		}
 	}
 	
 	// 根据revert判断是否要返回并执行(若指定放置元素且没drop则自动回到原处与revert设置无关)
 	function executeRevert(){
-		var xdragging = obj.get('proxy') ;
-		var xleft = 0, xtop = 0 ;
-		// 是否返回
+		var xdragging = obj.get('proxy'),
+			xleft = 0,
+			xtop = 0 ;
+		// 恢复光标
+		xdragging.css('cursor', 'default') ;
 		if(obj.get('revert') === true || (dropping === null && obj.get('drop') !== null)){ 
 			// 代理元素返回源节点处
 			if(typeof(obj.get('element').data('drag-left')) !== 'undefined'){
@@ -244,10 +246,11 @@ define(function(require, exports, module){
 			}
 			obj.get('element').css('left', xleft) ;
 			obj.get('element').css('top', xtop) ;
+			var dnd = obj ;
 			xdragging.animate({left: obj.get('element').offset().left, top: obj.get('element').offset().top}, 
 				              obj.get('revertDuration'), function(){
-				// 删除代理元素 显示源节点
-				obj.get('element').css('visibility', 'visible') ;
+				// 显示源节点 移除代理元素
+				dnd.get('element').css('visibility', 'visible') ;
 				xdragging.remove() ;
 			}) ;
 		}
@@ -266,7 +269,7 @@ define(function(require, exports, module){
 				obj.get('element').css('left', xleft) ;
 				obj.get('element').css('top', xtop) ;
 			}
-			// 删除代理元素 显示源节点
+			// 显示源节点 移除代理元素
 			obj.get('element').css('visibility', 'visible') ;
 			xdragging.remove() ;
 		}
@@ -296,83 +299,84 @@ define(function(require, exports, module){
 		}
 	}
 	
-	// 处理属性合法性
-	function handleAttr(){	
-		var attr = '', 
-			element = obj.get('element'), 
+	// 处理配置合法性
+	function handleConfig(dnd){	
+		var option = '',
+			element = dnd.get('element'),
 			value = null ;
-		for(attr in obj.attrs){
-			value = obj.get(attr) ;
-			switch(attr){
+		
+		for(option in dnd.attrs){
+			value = dnd.get(option) ;
+			switch(option){
 				case 'containment':
 					// containment不能为element本身 element也不能在containment外
 					if($(value).size() === 0 || $(value).get(0) === element.get(0) ||
 					   !isContain($(value).eq(0), element)){
-						obj.set('containment', null) ;
+						dnd.set('containment', null) ;
 					}
 					else{
-						obj.set('containment', $(obj.get('containment')).eq(0)) ;
+						dnd.set('containment', $(dnd.get('containment')).eq(0)) ;
 					}
 					break ;
 				case 'axis':
 					if(value !== 'x' && value !== 'y' && value !== false){
-						obj.set('axis', false) ;
+						dnd.set('axis', false) ;
 					}
 					break ;
 				case 'visible':
 					if(typeof(value) !== 'boolean'){
-						obj.set('visible', false) ;
+						dnd.set('visible', false) ;
 					}
 					break ;
 				case 'proxy':
 					// proxy不能为element本身, 也不能为containment
 					// 只要不设置proxy，proxy只需clone一次
 					if($(value).size() === 0 || $(value).get(0) === element.get(0) ||
-					   $(value).get(0) === $(obj.get('containment')).get(0)){
-						obj.set('proxy', obj.get('element').clone()) ;
+					   $(value).get(0) === $(dnd.get('containment')).get(0)){
+						dnd.set('proxy', dnd.get('element').clone()) ;
 					}
 					else{
-						obj.set('proxy', $(obj.get('proxy')).eq(0)) ;
+						dnd.set('proxy', $(dnd.get('proxy')).eq(0)) ;
 					}
-					var proxy = obj.get('proxy') ;
+					var proxy = dnd.get('proxy') ;
 					proxy.css('position', 'absolute') ;
 					proxy.css('margin', '0') ;
-					proxy.css('left', obj.get('element').offset().left) ;
-					proxy.css('top', obj.get('element').offset().top) ;
+					proxy.css('left', dnd.get('element').offset().left) ;
+					proxy.css('top', dnd.get('element').offset().top) ;
 					proxy.css('visibility', 'hidden') ;
 					proxy.appendTo('body') ;
 					break ;
 				case 'drop':
 					if($(value).size() === 0){
-						obj.set('drop', null) ;
+						dnd.set('drop', null) ;
 					}
 					else{
-						obj.set('drop', $(obj.get('drop'))) ;
+						dnd.set('drop', $(dnd.get('drop'))) ;
 					}
 					break ;
 				case 'revert':
 					if(typeof(value) !== 'boolean'){
-						obj.set('revert', false) ;
+						dnd.set('revert', false) ;
 					}
 					break ;
 				case 'revertDuration':
 					if(typeof(value) !== 'number'){
-						obj.set('revertDuration', 500) ;
+						dnd.set('revertDuration', 500) ;
 					}
 					break ;
 				case 'disabled':
 					if(typeof(value) !== 'boolean'){
-						obj.set('disabled', false) ;
+						dnd.set('disabled', false) ;
 					}
 					break ;
 				case 'dragCursor':
 					if(typeof(value) !== 'string'){
-						obj.set('dragCursor', 'move') ;
+						dnd.set('dragCursor', 'move') ;
 					}
 					break ;
 				case 'dropCursor':
 					if(typeof(value) !== 'string'){
-						obj.set('dropCursor', 'copy') ;
+						dnd.set('dropCursor', 'copy') ;
 					}
 					break ;
 			}
