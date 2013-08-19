@@ -187,6 +187,7 @@ define(function(require, exports, module){
         }
         obj.get('proxy').css('visibility', 'visible') ;
         obj.get('proxy').css('cursor', obj.get('dragCursor')) ;
+        obj.get('proxy').focus() ;
         
         dataTransfer = {} ;
         draggingPre = false ;
@@ -256,6 +257,7 @@ define(function(require, exports, module){
                             dragging.offset().top + diffY)){
                         dropping = $(elem) ;
                         dragging.css('cursor', obj.get('dropCursor')) ;
+                        dragging.focus() ;
                         obj.trigger('dragenter', dragging, dropping) ;
                         return ;
                     }
@@ -265,6 +267,7 @@ define(function(require, exports, module){
                 if(!isContain(dropping, dragging.offset().left + diffX,
                         dragging.offset().top + diffY)){
                     dragging.css('cursor', obj.get('dragCursor')) ;
+                    dragging.focus() ;
                     obj.trigger('dragleave', dragging, dropping) ;
                     dropping = null ;
                 }
@@ -310,6 +313,7 @@ define(function(require, exports, module){
         
         // 恢复光标
         xdragging.css('cursor', 'default') ;
+        xdragging.focus() ;
         
         if(obj.get('revert') === true ||
                 (dropping === null && obj.get('drop') !== null)){
