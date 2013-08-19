@@ -47,6 +47,10 @@
 
 ## API
 
+### Dnd(element, config)
+构造函数，element不能为空，config可以为空
+>注：config应为纯粹对象
+
 ### set(option, value)
 设置配置属性，element不能设置
 >注：一切set设置应在拖放前
