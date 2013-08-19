@@ -1,9 +1,9 @@
 
 define(function(require, exports, module){
-    var Dnd ;
+    var Dnd = null ;
     
-    var $ = require('$') ;
-    var Base = require('base') ;
+    var $ = require('$'),
+        Base = require('base') ;
     
     /*
      * static private variable(module global varibale)
@@ -98,6 +98,8 @@ define(function(require, exports, module){
      * 核心部分，处理鼠标事件，实现拖放逻辑
     */
     function handleDragEvent(event){
+        var dnd = null ;
+        
         switch(event.type){
             case 'mousedown':
                 
@@ -106,7 +108,7 @@ define(function(require, exports, module){
                         $(event.target).data('dnd') instanceof Dnd){
                     
                     // 取得elemenet上的dnd
-                    var dnd = $(event.target).data('dnd') ;
+                    dnd = $(event.target).data('dnd') ;
                     
                     // 源节点不允许拖放则返回
                     if(dnd.get('disabled') === true) return ;
@@ -151,6 +153,11 @@ define(function(require, exports, module){
             
             case 'mouseup':
                 if(dragging !== null){
+                    
+                    // 恢复光标
+                    dragging.css('cursor', 'default') ;
+                    dragging.focus() ;
+                    
                     dragging = null ;
                     
                     // 根据dropping判断是否drop并执行
@@ -163,8 +170,7 @@ define(function(require, exports, module){
                     obj.trigger('dragend', obj.get('element'), dropping) ;
                     obj = null ;
                     dropping = null ;
-                }
-                else if(draggingPre === true){
+                } else if(draggingPre === true){
                        
                     // 点击而非拖放时
                     obj.get('proxy').remove() ;
@@ -208,12 +214,10 @@ define(function(require, exports, module){
                     dragging.offset().top, dragging.outerWidth(), 
                     dragging.outerHeight())){
                 dragging.css('left', event.pageX - diffX) ;
-            }
-            else{
+            } else{
                 if(event.pageX - diffX <= container.offset().left){
                     dragging.css('left', container.offset().left) ;
-                } 
-                else{
+                } else{
                     dragging.css('left', container.offset().left +
                             container.innerWidth() - dragging.outerWidth()) ;
                 }
@@ -227,12 +231,10 @@ define(function(require, exports, module){
                     event.pageY - diffY, dragging.outerWidth(),
                     dragging.outerHeight())){
                 dragging.css('top', event.pageY - diffY) ;
-            }
-            else{
+            } else{
                 if(event.pageY - diffY <= container.offset().top){
                     dragging.css('top', container.offset().top) ;
-                } 
-                else{
+                } else{
                     dragging.css('top', container.offset().top +
                             container.innerHeight() - dragging.outerHeight()) ;
                 }
@@ -262,16 +264,14 @@ define(function(require, exports, module){
                         return ;
                     }
                 }) ;
-            } 
-            else{
+            } else{
                 if(!isContain(dropping, dragging.offset().left + diffX,
                         dragging.offset().top + diffY)){
                     dragging.css('cursor', obj.get('dragCursor')) ;
                     dragging.focus() ;
                     obj.trigger('dragleave', dragging, dropping) ;
                     dropping = null ;
-                }
-                else{
+                } else{
                     obj.trigger('dragover', dragging, dropping) ;
                 }
             }
@@ -309,11 +309,8 @@ define(function(require, exports, module){
     function executeRevert(){
         var xdragging = obj.get('proxy'),
             xleft = 0,
-            xtop = 0 ;
-        
-        // 恢复光标
-        xdragging.css('cursor', 'default') ;
-        xdragging.focus() ;
+            xtop = 0, 
+            dnd = null ;
         
         if(obj.get('revert') === true ||
                 (dropping === null && obj.get('drop') !== null)){
@@ -324,8 +321,7 @@ define(function(require, exports, module){
             if(typeof(obj.get('element').data('drag-left')) !== 'undefined'){
                 xleft = obj.get('element').data('drag-left') ;
                 xtop = obj.get('element').data('drag-top') ;
-            }
-            else{
+            } else{
                 xleft = 0 ;
                 xtop = 0 ;
             }
@@ -333,7 +329,7 @@ define(function(require, exports, module){
             obj.get('element').css('top', xtop) ;
             
             // obj 可能已经设置为空，所以应先赋给dnd，用于回调
-            var dnd = obj ;
+            dnd = obj ;
             
             xdragging.animate({left: obj.get('element').offset().left,
                     top: obj.get('element').offset().top},
@@ -343,8 +339,7 @@ define(function(require, exports, module){
                 dnd.get('element').css('visibility', 'visible') ;
                 xdragging.remove() ;
             }) ;
-        }
-        else{
+        } else{
             
             /* 
              * 源节点移动到代理元素处
@@ -358,8 +353,7 @@ define(function(require, exports, module){
                 obj.get('element').css('top',
                         (isNaN(parseInt(obj.get('element').css('top'))) ? 0 : 
                         parseInt(obj.get('element').css('top'))) + xtop) ;
-            }
-            else{
+            } else{
                 obj.get('element').css('position', 'relative') ;
                 obj.get('element').css('left', xleft) ;
                 obj.get('element').css('top', xtop) ;
@@ -381,7 +375,10 @@ define(function(require, exports, module){
      * 1.5是为了补全浏览器间的浮点数运算差异
     */
     function isContain(A, B, C, D, F){
-        var x = 0, y = 0, width = 0, height = 0;
+        var x = 0,
+            y = 0, 
+            width = 0, 
+            height = 0 ;
         
         if(arguments.length == 2){
             return $(A).offset().left - 1.5 <= $(B).offset().left && 
@@ -417,9 +414,13 @@ define(function(require, exports, module){
     function handleConfig(dnd){
         var option = '',
             element = dnd.get('element'),
-            value = null ;
+            value = null,
+            proxy = null ;
         
         for(option in dnd.attrs){
+            if(dnd.attrs.hasOwnProperty(option) === false){
+                continue ;
+            }
             value = dnd.get(option) ;
             
             switch(option){
@@ -431,22 +432,24 @@ define(function(require, exports, module){
                             $(value).get(0) === element.get(0) ||
                             !isContain($(value).eq(0), element)){
                         dnd.set('containment', null) ;
-                    }
-                    else{
+                    } else{
                         dnd.set('containment',
                                 $(dnd.get('containment')).eq(0)) ;
                     }
                     break ;
+                
                 case 'axis':
                     if(value !== 'x' && value !== 'y' && value !== false){
                         dnd.set('axis', false) ;
                     }
                     break ;
+                
                 case 'visible':
                     if(typeof(value) !== 'boolean'){
                         dnd.set('visible', false) ;
                     }
                     break ;
+                
                 case 'proxy':
                     
                     // proxy不能为element本身, 也不能为containment
@@ -455,15 +458,14 @@ define(function(require, exports, module){
                             $(value).get(0) ===
                             $(dnd.get('containment')).get(0)){
                         dnd.set('proxy', dnd.get('element').clone()) ;
-                    }
-                    else{
+                    } else{
                         dnd.set('proxy', $(dnd.get('proxy')).eq(0)) ;
                     }
                     
                     /*
                      * 设置proxy并插入文档
                     */
-                    var proxy = dnd.get('proxy') ;
+                    proxy = dnd.get('proxy') ;
                     proxy.css('position', 'absolute') ;
                     proxy.css('margin', '0') ;
                     proxy.css('left', dnd.get('element').offset().left) ;
@@ -471,34 +473,39 @@ define(function(require, exports, module){
                     proxy.css('visibility', 'hidden') ;
                     proxy.appendTo('body') ;
                     break ;
+                
                 case 'drop':
                     if($(value).size() === 0){
                         dnd.set('drop', null) ;
-                    }
-                    else{
+                    } else{
                         dnd.set('drop', $(dnd.get('drop'))) ;
                     }
                     break ;
+                
                 case 'revert':
                     if(typeof(value) !== 'boolean'){
                         dnd.set('revert', false) ;
                     }
                     break ;
+                
                 case 'revertDuration':
                     if(typeof(value) !== 'number'){
                         dnd.set('revertDuration', 500) ;
                     }
                     break ;
+                
                 case 'disabled':
                     if(typeof(value) !== 'boolean'){
                         dnd.set('disabled', false) ;
                     }
                     break ;
+                
                 case 'dragCursor':
                     if(typeof(value) !== 'string'){
                         dnd.set('dragCursor', 'move') ;
                     }
                     break ;
+                
                 case 'dropCursor':
                     if(typeof(value) !== 'string'){
                         dnd.set('dropCursor', 'copy') ;
