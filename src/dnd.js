@@ -9,12 +9,12 @@ define(function(require, exports, module){
      * static private variable(module global varibale)
     */
     var draggingPre = false,  // 标识预拖放
-	    dragging = null,  // 标识当前拖放的代理元素
-		dropping = null,  // 标识当前的目标元素
-		diffX = 0,
-		diffY = 0,   // diffX, diffY记录鼠标点击离源节点的距离
-		obj = null,  // 存储当前拖放的dnd
-		dataTransfer = {} ; // 存储拖放信息，在dragstart可设置，在drop中可读取
+        dragging = null,  // 标识当前拖放的代理元素
+        dropping = null,  // 标识当前的目标元素
+        diffX = 0,
+	    diffY = 0,   // diffX, diffY记录鼠标点击离源节点的距离
+	    obj = null,  // 存储当前拖放的dnd
+	    dataTransfer = {} ; // 存储拖放信息，在dragstart可设置，在drop中可读取
 	
 	/*
 	 * constructor function
