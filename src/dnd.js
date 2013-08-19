@@ -502,6 +502,7 @@ define(function(require, exports, module){
             }
         }
     }
+    
     Dnd.prototype.open() ;
     module.exports = Dnd ;
 }) ;
