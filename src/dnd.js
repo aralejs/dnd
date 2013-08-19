@@ -55,7 +55,7 @@ define(function(require, exports, module){
             // 如果元素原始是relative，记录下left和top
             if(this.get('element').css('position') === 'relative'){
                 this.get('element').data('drag-left',
-                this.get('element').css('left')) ;
+                        this.get('element').css('left')) ;
                 this.get('element').data('drag-top',
                         this.get('element').css('top')) ;
             }
