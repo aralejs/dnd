@@ -19,23 +19,23 @@ define(function(require, exports, module){
 	/*
 	 * constructor function
 	*/
-	Dnd = Base.extend({
-		attrs: {
-			element: {
-				value: null,
-				readOnly: true
-			},
-			containment: null,
-			axis: false,
-			visible: false,
-			proxy: null,
-			drop: null,
-			revert: false,
-			revertDuration: 500,
-			disabled: false,
-			dragCursor: 'move',
-			dropCursor: 'copy'
-		}, 
+    Dnd = Base.extend({
+        attrs: {
+            element: {
+                value: null,
+                readOnly: true
+            },
+            containment: null,
+            axis: false,
+            visible: false,
+            proxy: null,
+            drop: null,
+            revert: false,
+            revertDuration: 500,
+            disabled: false,
+            dragCursor: 'move',
+            dropCursor: 'copy'
+        }, 
 		
 		initialize: function(elem, config){
 			
@@ -188,8 +188,11 @@ define(function(require, exports, module){
 		obj.get('proxy').css('visibility', 'visible') ;
 		obj.get('proxy').css('cursor', obj.get('dragCursor')) ;
 		
-		dataTransfer = {} ; draggingPre = false ; dragging = obj.get('proxy') ;
-		obj.trigger('dragstart', dataTransfer, dragging, dropping) ; }
+		dataTransfer = {} ;
+		draggingPre = false ;
+		dragging = obj.get('proxy') ;
+		obj.trigger('dragstart', dataTransfer, dragging, dropping) ;
+	}
 	
 	/*
 	 * 根据边界和方向一起判断是否drag并执行
