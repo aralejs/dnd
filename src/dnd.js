@@ -1,14 +1,14 @@
 
 define(function(require, exports, module){
-	var Dnd ;
+    var Dnd ;
 	
-	var $ = require('$') ;
-	var Base = require('base') ;
+    var $ = require('$') ;
+    var Base = require('base') ;
 	
-	/*
-	 * static private variable(module global varibale)
-	*/
-	var draggingPre = false,  // 标识预拖放
+    /*
+     * static private variable(module global varibale)
+    */
+    var draggingPre = false,  // 标识预拖放
 	    dragging = null,  // 标识当前拖放的代理元素
 		dropping = null,  // 标识当前的目标元素
 		diffX = 0,
