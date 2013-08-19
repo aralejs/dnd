@@ -38,6 +38,7 @@ define(function(require, exports, module){
         }, 
         
         initialize: function(elem, config){
+            
             /* 
              * 检查源节点elem合法性
              * 初始化dnd
