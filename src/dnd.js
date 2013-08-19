@@ -15,7 +15,7 @@ define(function(require, exports, module){
         diffY = 0,   // diffX, diffY记录鼠标点击离源节点的距离
         obj = null,  // 存储当前拖放的dnd
         dataTransfer = {} ; // 存储拖放信息，在dragstart可设置，在drop中可读取
-	
+    
 	/*
 	 * constructor function
 	*/
@@ -91,7 +91,6 @@ define(function(require, exports, module){
 			$(document).off('mouseup', handleDragEvent) ;
 		}
 	}) ;
-	
 	
 	/*-----------------------static private function--------------------*/
 	
@@ -189,11 +188,8 @@ define(function(require, exports, module){
 		obj.get('proxy').css('visibility', 'visible') ;
 		obj.get('proxy').css('cursor', obj.get('dragCursor')) ;
 		
-		dataTransfer = {} ;
-		draggingPre = false ;
-		dragging = obj.get('proxy') ;
-		obj.trigger('dragstart', dataTransfer, dragging, dropping) ;
-	}
+		dataTransfer = {} ; draggingPre = false ; dragging = obj.get('proxy') ;
+		obj.trigger('dragstart', dataTransfer, dragging, dropping) ; }
 	
 	/*
 	 * 根据边界和方向一起判断是否drag并执行
@@ -346,10 +342,8 @@ define(function(require, exports, module){
 			/* 
 			 * 源节点移动到代理元素处
 			*/
-			xleft = xdragging.offset().left -
-			        obj.get('element').offset().left ;
-			xtop = xdragging.offset().top - 
-			        obj.get('element').offset().top ;
+			xleft = xdragging.offset().left - obj.get('element').offset().left ;
+			xtop = xdragging.offset().top -  obj.get('element').offset().top ;
 			if(obj.get('element').css('position') === 'relative'){
 				obj.get('element').css('left', 
 				        (isNaN(parseInt(obj.get('element').css('left'))) ? 0 : 
@@ -402,11 +396,9 @@ define(function(require, exports, module){
 		if(arguments.length == 5){
 			x = B, y = C, width = D, height = F ;
 			return $(A).offset().left - 1.5 <= x &&
-			        $(A).offset().left + $(A).innerWidth() >=
-					x + width - 1.5 &&
+			        $(A).offset().left + $(A).innerWidth() >= x + width - 1.5 &&
 					$(A).offset().top - 1.5 <= y &&
-					$(A).offset().top + $(A).innerHeight() >=
-					y + height - 1.5 ;
+					$(A).offset().top + $(A).innerHeight() >= y + height - 1.5 ;
 		}
 	}
 	
