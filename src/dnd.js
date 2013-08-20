@@ -412,7 +412,7 @@ define(function(require, exports, module){
                     // element也不能在containment外
                     if($(value).size() === 0 ||
                             $(value).get(0) === element.get(0) ||
-                            !isContain($(value).eq(0), element, 0.5)){
+                            !isContain($(value).eq(0), element, 1.0)){
                         dnd.set('containment', null) ;
                     } else{
                         dnd.set('containment',
@@ -501,7 +501,7 @@ define(function(require, exports, module){
     /*
      * 判断元素B是否位于元素A内部 or 点(B, C)是否位于A内
      * error为了补全IE9,IE10对offset浮点值的差异, 
-     * 目前只是在判断container是否合法时使用error=0.5
+     * 目前只是在判断container是否合法时使用error=1.0
     */
     function isContain(A, B, C){
         var error = C ;
