@@ -325,18 +325,19 @@ define(function(require, exports, module){
                 xleft = 0 ;
                 xtop = 0 ;
             }
-            obj.get('element').css('left', xleft) ;
-            obj.get('element').css('top', xtop) ;
+            if(obj.get('element').css('position') === 'relative'){
+                obj.get('element').css('left', xleft) ;
+                obj.get('element').css('top', xtop) ;
+            }
             
             // obj 可能已经设置为空，所以应先赋给dnd，用于回调
             dnd = obj ;
-            
             xdragging.animate({left: obj.get('element').offset().left,
                     top: obj.get('element').offset().top},
                     obj.get('revertDuration'), function(){
                 
                 // 显示源节点 移除代理元素
-                dnd.get('element').css('visibility', 'visible') ;
+                dnd.get('element').css('visibility', '') ;
                 xdragging.remove() ;
             }) ;
         } else{
@@ -360,7 +361,7 @@ define(function(require, exports, module){
             }
             
             // 显示源节点 移除代理元素
-            obj.get('element').css('visibility', 'visible') ;
+            obj.get('element').css('visibility', '') ;
             xdragging.remove() ;
         }
     }

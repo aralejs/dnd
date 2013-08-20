@@ -9,7 +9,7 @@
 </style>
 
 
-## 1. 带有边界的拖拽
+## 1. 带有边界的拖放
 
 <div id="container1" class="container">
     <div id="div1" class="drag"></div>
@@ -20,7 +20,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 });
 ````
 
-## 2. 带有边界和方向的拖拽
+## 2. 带有方向的拖放
 
 <div id="container2" class="container">
     <div id="div2" class="drag"></div>
@@ -32,7 +32,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ````
 
 
-## 3. 带有返回且源节点不移动的拖拽
+## 3. 带有返回且源节点不移动的拖放
 
 <div id="container3" class="container">
     <div id="div3" class="drag"></div>
@@ -43,48 +43,51 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 });
 ````
 
-## 4. 带有代理元素和放置元素的拖放
+## 4. 带有放置元素的拖放
 
 <div id="div4" class="drag"></div>
 <div id="drop1" class="container"></div>
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
-    var proxy = document.createElement('img') ;
-    $(proxy).on('load', function(){
-        dnd = new Dnd('#div4', {drop: '#drop1', proxy: proxy}) ;
-    })
-    proxy.width = 50 ;
-    proxy.height = 50 ;
-    proxy.src = 'http://tp3.sinaimg.cn/1748374882/180/40020642911/1' ;
+    var dnd = new Dnd('#div4', {drop: '#drop1'}) ;
 });
 ````
 
-## 5. 带有返回和处理事件的拖放
+## 5. 带有处理事件的拖放
 
 <div id="div5" class="drag"></div>
 <div id="drop2" class="container"></div>
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
-    var dnd = new Dnd('#div5', {drop: '#drop2', revert: true}) ;
     
-    // dataTransfer为拖放数据，传输信息
-    dnd.on('dragstart', function(dataTransfer, dragging, dropping){
-        dataTransfer.data = 'cjw replace' ;
+    var proxy = document.createElement('img'),
+        dnd = null ;
+     
+    $(proxy).on('load', function(){
+        dnd = new Dnd('#div5', {drop: '#drop2', proxy: proxy, visible: true, revert: true}) ;
+        
+        // dataTransfer为拖放数据，传输信息
+        dnd.on('dragstart', function(dataTransfer, dragging, dropping){
+            dataTransfer.data = 'cjw replace' ;
+        })
+        dnd.on('dragenter', function(dragging, dropping){
+            dropping.addClass('over') ;
+        })
+        dnd.on('dragleave', function(dragging, dropping){
+            dropping.removeClass('over') ;
+        })
+        dnd.on('drop', function(dataTransfer, dragging, dropping){
+            if(!$.isEmptyObject(dataTransfer) && typeof(dataTransfer.data) !== 'undefined'){
+                dropping.text(dataTransfer.data) ;
+            }
+        })
+        dnd.on('dragend', function(dragging, dropping){
+            if(dropping) dropping.removeClass('over') ;
+        })
     })
-    dnd.on('dragenter', function(dragging, dropping){
-        dropping.addClass('over') ;
-    })
-    dnd.on('dragleave', function(dragging, dropping){
-        dropping.removeClass('over') ;
-    })
-    dnd.on('drop', function(dataTransfer, dragging, dropping){
-        if(!$.isEmptyObject(dataTransfer) && typeof(dataTransfer.data) !== 'undefined'){
-            dropping.text(dataTransfer.data) ;
-        }
-    })
-    dnd.on('dragend', function(dragging, dropping){
-        if(dropping) dropping.removeClass('over') ;
-    })
+    proxy.width = 50 ;
+    proxy.height = 50 ;
+    proxy.src = 'http://tp3.sinaimg.cn/1748374882/180/40020642911/1' ;
 });
 ````
 
