@@ -218,7 +218,8 @@ define(function(require, exports, module){
         if(axis !== 'y'){
             if(container === null || 
                     (xleft >= container.offset().left &&
-                    xleft + dragging.outerWidth() <= container.offset().left +                      container.outerWidth())){
+                    xleft + dragging.outerWidth() <= container.offset().left +
+                    container.outerWidth())){
                 dragging.css('left', xleft) ;
             } else{
                 if(xleft <= container.offset().left){
@@ -235,7 +236,8 @@ define(function(require, exports, module){
         if(axis !== 'x'){
             if(container === null || 
                     (xtop >= container.offset().top &&
-                    xtop + dragging.outerHeight() <= container.offset().top +                       container.outerHeight())){
+                    xtop + dragging.outerHeight() <= container.offset().top +
+                    container.outerHeight())){
                 dragging.css('top', xtop) ;
             } else{
                 if(xtop <= container.offset().top){
