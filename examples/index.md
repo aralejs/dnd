@@ -68,7 +68,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
         
         // dataTransfer为拖放数据，传输信息
         dnd.on('dragstart', function(dataTransfer, dragging, dropping){
-            dataTransfer.data = 'cjw replace' ;
+            dataTransfer.data = '玉伯也叫射雕' ;
         })
         dnd.on('dragenter', function(dragging, dropping){
             dropping.addClass('over') ;
