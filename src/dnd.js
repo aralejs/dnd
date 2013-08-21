@@ -515,7 +515,7 @@ define(function(require, exports, module){
                     $(B).offset().left + $(B).outerWidth() - error &&
                     $(A).offset().top - error <= $(B).offset().top && 
                     $(A).offset().top + $(A).outerHeight() >=
-                    $(B).offset().top + $(B).outerHeight() ;
+                    $(B).offset().top + $(B).outerHeight() - error ;
         } else{  
             return $(A).offset().left <= B &&
                     $(A).offset().left + $(A).outerWidth() >= B &&
