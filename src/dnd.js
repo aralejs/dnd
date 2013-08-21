@@ -43,11 +43,8 @@ define(function(require, exports, module){
              * 检查源节点elem合法性
              * 初始化dnd
             */
-            if($(elem).size() === 0){
-                throw new Error('element error!') ;
-            }
-            if($.isPlainObject(config) === false){
-                config = {} ;
+            if($(elem).length === 0 || $(elem).get(0).nodeType !== 1){
+                $.error('element error!') ;
             }
             config = $.extend(config, {element: $(elem).eq(0)}) ;
             Dnd.superclass.initialize.call(this, config) ;
@@ -61,7 +58,7 @@ define(function(require, exports, module){
             }
             
             // 在源节点上存储dnd
-            this.get('element').data('dnd', this) ; 
+            this.get('element').data('dnd', this) ;
         },
         
         /*
@@ -69,7 +66,7 @@ define(function(require, exports, module){
         */
         set: function(option, value){
             if(obj !== this){
-                Dnd.superclass.set.call(this, option, value) ;
+                Dnd.superclass.set.call(this, option, value, {override: true}) ;
             }
         },
         
@@ -91,8 +88,6 @@ define(function(require, exports, module){
             $(document).off('mouseup', handleDragEvent) ;
         }
     }) ;
-    
-    /*-----------------------static private function--------------------*/
     
     /* 
      * 核心部分，处理鼠标事件，实现拖放逻辑
@@ -272,9 +267,9 @@ define(function(require, exports, module){
                 $.each(drop, function(index, elem){
                     
                     // 注意检测drop不是element或者proxy本身
-                    if(elem !== element.get(0) &&
+                    if(elem.nodeType === 1 && elem !== element.get(0) &&
                             elem !== dragging.get(0) &&
-                            isContain(elem, xleft, xtop)){
+                            isContain(elem, xleft, xtop) === true){
                         dragging.css('cursor', dropCursor) ;
                         dragging.focus() ;
                         
@@ -284,7 +279,7 @@ define(function(require, exports, module){
                     }
                 }) ;
             } else{
-                if(!isContain(dropping, xleft, xtop)){
+                if(isContain(dropping, xleft, xtop) === false){
                     dragging.css('cursor', dragCursor) ;
                     dragging.focus() ;
                     
@@ -309,7 +304,7 @@ define(function(require, exports, module){
         if(dropping !== null){
             
             // 放置时不完全在drop中并且不需要返回的放置中央
-            if(!isContain(dropping, xdragging) && revert === false){
+            if(isContain(dropping, xdragging) === false && revert === false){
                 xdragging.css('left', dropping.offset().left +
                         (dropping.outerWidth() -
                         xdragging.outerWidth()) / 2) ;
@@ -342,7 +337,7 @@ define(function(require, exports, module){
             /* 
              * 代理元素返回源节点处
             */
-            if(typeof(element.data('drag-left')) !== 'undefined'){
+            if(typeof element.data('drag-left') !== 'undefined'){
                 xleft = element.data('drag-left') ;
                 xtop = element.data('drag-top') ;
             } else{
@@ -396,105 +391,94 @@ define(function(require, exports, module){
     function handleConfig(dnd){
         var element = dnd.get('element'),
             proxy = null,
-            option = '',
+            flag = false,
             value ;
         
-        for(option in dnd.attrs){
-            if(dnd.attrs.hasOwnProperty(option) === false){
-                continue ;
+        /*
+         * containment不能为element本身
+         * element也不能在containment外
+        */
+        value = dnd.get('containment') ;
+        if($(value).length === 0 || $(value).get(0).nodeType !== 1 ||
+                $(value).get(0) === element.get(0) ||
+                isContain($(value).eq(0), element, 1.0) === false){
+            dnd.set('containment', null) ;
+        } else{
+            dnd.set('containment', $(value).eq(0)) ;
+        }
+        
+        /* 
+         * proxy不能为element本身，containment
+         * 设置proxy并插入文档
+         * 若在mouseover中插入，会造成抖动
+        */
+        value = dnd.get('proxy') ;
+        if($(value).length === 0 || $(value).get(0).nodeType !== 1 ||
+                $(value).get(0) === element.get(0) ||
+                $(value).get(0) === $(dnd.get('containment')).get(0)){
+            dnd.set('proxy', element.clone()) ;
+        } else{
+            dnd.set('proxy', $(value).eq(0)) ;
+        }
+        proxy = dnd.get('proxy') ;
+        proxy.css('position', 'absolute') ;
+        proxy.css('margin', '0') ;
+        proxy.css('left', element.offset().left) ;
+        proxy.css('top', element.offset().top) ;
+        proxy.css('visibility', 'hidden') ;
+        proxy.appendTo('body') ;
+        
+        /*
+         * 放置元素不能是elment本身，proxy
+         * 若drop中没一个元素符合要求则不合法
+         * 
+        */
+        value = dnd.get('drop') ;
+        $.each($(value), function(index, elem){
+            if(elem.nodeType === 1 && elem !== element.get(0) &&
+                    elem != dnd.get('proxy').get(0)){
+                flag = true ;
             }
-            value = dnd.get(option) ;
-            
-            switch(option){
-                case 'containment':
-                    
-                    // containment不能为element本身
-                    // element也不能在containment外
-                    if($(value).size() === 0 ||
-                            $(value).get(0) === element.get(0) ||
-                            !isContain($(value).eq(0), element, 1.0)){
-                        dnd.set('containment', null) ;
-                    } else{
-                        dnd.set('containment',
-                                $(dnd.get('containment')).eq(0)) ;
-                    }
-                    break ;
+        }) ;
+        if($(value).length === 0 || flag === false){
+            dnd.set('drop', null) ;
+        } else{
+            dnd.set('drop', $(value)) ;
+        }
+               
+        value = dnd.get('axis') ;
+        if(value !== 'x' && value !== 'y' && value !== false){
+            dnd.set('axis', false) ;
+        }
                 
-                case 'axis':
-                    if(value !== 'x' && value !== 'y' && value !== false){
-                        dnd.set('axis', false) ;
-                    }
-                    break ;
+        value = dnd.get('visible') ;
+        if(typeof value !== 'boolean'){
+            dnd.set('visible', false) ;
+        }
                 
-                case 'visible':
-                    if(typeof(value) !== 'boolean'){
-                        dnd.set('visible', false) ;
-                    }
-                    break ;
+        value = dnd.get('revert') ;
+        if(typeof value !== 'boolean'){
+            dnd.set('revert', false) ;
+        }
                 
-                case 'proxy':
-                    
-                    // proxy不能为element本身, 也不能为containment
-                    if($(value).size() === 0 ||
-                            $(value).get(0) === element.get(0) ||
-                            $(value).get(0) ===
-                            $(dnd.get('containment')).get(0)){
-                        dnd.set('proxy', element.clone()) ;
-                    } else{
-                        dnd.set('proxy', $(dnd.get('proxy')).eq(0)) ;
-                    }
-                    
-                    /*
-                     * 设置proxy并插入文档
-                     * 若在mouseover中插入，会造成抖动
-                    */
-                    proxy = dnd.get('proxy') ;
-                    proxy.css('position', 'absolute') ;
-                    proxy.css('margin', '0') ;
-                    proxy.css('left', element.offset().left) ;
-                    proxy.css('top', element.offset().top) ;
-                    proxy.css('visibility', 'hidden') ;
-                    proxy.appendTo('body') ;
-                    break ;
-                
-                case 'drop':
-                    if($(value).size() === 0){
-                        dnd.set('drop', null) ;
-                    } else{
-                        dnd.set('drop', $(dnd.get('drop'))) ;
-                    }
-                    break ;
-                
-                case 'revert':
-                    if(typeof(value) !== 'boolean'){
-                        dnd.set('revert', false) ;
-                    }
-                    break ;
-                
-                case 'revertDuration':
-                    if(typeof(value) !== 'number'){
-                        dnd.set('revertDuration', 500) ;
-                    }
-                    break ;
-                
-                case 'disabled':
-                    if(typeof(value) !== 'boolean'){
-                        dnd.set('disabled', false) ;
-                    }
-                    break ;
-                
-                case 'dragCursor':
-                    if(typeof(value) !== 'string'){
-                        dnd.set('dragCursor', 'move') ;
-                    }
-                    break ;
-                
-                case 'dropCursor':
-                    if(typeof(value) !== 'string'){
-                        dnd.set('dropCursor', 'copy') ;
-                    }
-                    break ;
-            }
+        value = dnd.get('revertDuration') ;
+        if(typeof value !== 'number'){
+            dnd.set('revertDuration', 500) ;
+        }
+        
+        value = dnd.get('disabled') ;
+        if(typeof value !== 'boolean'){
+            dnd.set('disabled', false) ;
+        }
+        
+        value = dnd.get('dragCursor') ;
+        if(typeof value !== 'string'){
+            dnd.set('dragCursor', 'move') ;
+        }
+        
+        value = dnd.get('dropCursor') ;
+        if(typeof value !== 'string'){
+            dnd.set('dropCursor', 'copy') ;
         }
     }
     
@@ -506,8 +490,8 @@ define(function(require, exports, module){
     function isContain(A, B, C){
         var error = C ;
         
-        if(typeof(B) !== 'number'){
-            if(typeof(error) !== 'number'){
+        if(typeof B !== 'number'){
+            if(typeof error !== 'number'){
                 error = 0 ;
             }
             return $(A).offset().left - error <= $(B).offset().left &&
