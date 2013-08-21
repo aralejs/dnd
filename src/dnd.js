@@ -506,7 +506,7 @@ define(function(require, exports, module){
     function isContain(A, B, C){
         var error = C ;
         
-        if(typeof(B) === 'object'){
+        if(typeof(B) !== 'number'){
             if(typeof(error) !== 'number'){
                 error = 0 ;
             }
@@ -516,8 +516,7 @@ define(function(require, exports, module){
                     $(A).offset().top - error <= $(B).offset().top && 
                     $(A).offset().top + $(A).outerHeight() >=
                     $(B).offset().top + $(B).outerHeight() ;
-        }
-        if(typeof(B) === 'number' && typeof(C) === 'number'){  
+        } else{  
             return $(A).offset().left <= B &&
                     $(A).offset().left + $(A).outerWidth() >= B &&
                     $(A).offset().top <= C &&
