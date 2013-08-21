@@ -438,6 +438,7 @@ define(function(require, exports, module){
             if(elem.nodeType === 1 && elem !== element.get(0) &&
                     elem != dnd.get('proxy').get(0)){
                 flag = true ;
+                return false ; // 跳出each
             }
         }) ;
         if($(value).length === 0 || flag === false){
