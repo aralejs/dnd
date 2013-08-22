@@ -11,8 +11,8 @@ define(function(require){
                      '.over {border:2px dashed #000;}</style>' + 
                      '<div id="container1" class="container">' +
                      '<div id="drag1" class="drag"></div></div>' +
-                     '<div id="drop1" class= "drop"></div>' +
-                     '<div id="drop2" class= "drop"></div>' ;
+                     '<div id="drop1" class="container></div>' +
+                     '<div id="drop2" class="container></div>' ;
       var element = null,
           dnd = null ;
       
@@ -60,10 +60,10 @@ define(function(require){
           dnd = new Dnd('#drag1') ;
           dnd.set('containment', '#drag1') ;
           dnd.set('axis', 'xy') ;
-          
           $('#drag1').on('mousedown', function(event){
               event.which = 1 ;
           }) ;
+          
           $('#drag1').trigger('mousedown') ;
           setTimeout(function(){
               expect(dnd.get('containment')).to.be(null) ;
@@ -74,16 +74,30 @@ define(function(require){
       }) ;
       
       it('dataTransfer', function(done){
-          dnd = new Dnd('#drag1', {drop: '.drop'}) ;
+          dnd = new Dnd('#drag1', {drop: '#drop1'}) ;
           $('#drag1').on('mousedown', function(event){
               event.which = 1 ;
           }) ;
           dnd.on('dragstart', function(dataTransfer, dragging, dropping){
-              dataTransfer.data = dragging.attr('id') ;
+              dataTransfer.data = 'dataTransfer test' ;
           }) ;
           dnd.on('drop', function(dataTransfer, dragging, dropping){
               dropping.data('info', dataTransfer.data) ;
           }) ;
+          $('#drag1').on('mousedown', function(event){
+              event.which = 1 ;
+          }) ;
+          $('#drag1').on('mousemove', function(event){
+              event.which = 1 ;
+          }) ;
+          
+          $('#drag1').trigger('mousedown') ;
+          $('#drag1').trigger('mousemove') ;
+          setTimeout(function(){
+              expect($('#drop1').data('info')).to.be() ;
+              done() ;
+          }, 80) ;
+          $('#drag1').trigger('mouseup') ;
       }) ;
       
       

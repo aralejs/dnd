@@ -99,21 +99,27 @@ define(function(require, exports, module){
         
         switch(event.type){
             case 'mousedown':
-                
-                // 鼠标左键按下并且是可移动元素
-                if(event.which === 1 &&
-                        $(event.target).data('dnd') instanceof Dnd){
-                    
-                    // 取得elemenet上的dnd
+                if(event.which === 1){
                     dnd = $(event.target).data('dnd') ;
+                    
+                    /* 
+                     * 判断是否为可拖放元素
+                     * 用构造函数实例化 或者 
+                     * 通过data-dnd=true 触发, 此时不支持dataTransfer和事件
+                    */
+                    if(dnd === true){
+                        dnd = new Dnd(event.target, getConfig(event.target)) ;
+                    } else if(dnd instanceof Dnd){
+                        dnd = $(event.target).data('dnd') ;
+                    } else{
+                        return true ;
+                    }
                     
                     // 源节点不允许拖放则返回
                     if(dnd.get('disabled') === true) return ;
                     
                     /*
                      * 处理配置合法性
-                     * 使dnd对象赋给对象obj
-                     * 记录点击距源节点距离
                     */
                     handleConfig(dnd) ;
                     obj = dnd ;
@@ -501,6 +507,45 @@ define(function(require, exports, module){
         if(typeof value !== 'string'){
             dnd.set('dropCursor', 'copy') ;
         }
+    }
+    
+    /*
+     * 根据元素的data-attr属性来获取配置
+    */
+    function getConfig(element){
+        var config = {} ;
+        
+        if($(element).data('containment') !== undefined){
+            config.containment = $(element).data('containment') ;
+        }
+        if($(element).data('proxy') !== undefined){
+            config.proxy = $(element).data('proxy') ;
+        }
+        if($(element).data('drop') !== undefined){
+            config.drop = $(element).data('drop') ;
+        }
+        if($(element).data('axis') !== undefined){
+            config.axis = $(element).data('axis') ;
+        }
+        if($(element).data('visible') !== undefined){
+            config.visible = $(element).data('visible') ;
+        }
+        if($(element).data('revert') !== undefined){
+            config.revert = $(element).data('revert') ;
+        }
+        if($(element).data('revertDuration') !== undefined){
+            config.revertDuration = $(element).data('revertDuration') ;
+        }
+        if($(element).data('disabled') !== undefined){
+            config.disabled = $(element).data('disabled') ;
+        }
+        if($(element).data('dragCursor') !== undefined){
+            config.dragCursor = $(element).data('dragCursor') ;
+        }
+        if($(element).data('dropCursor') !== undefined){
+            config.dropCursor = $(element).data('dropCursor') ;
+        }
+        return config ;
     }
     
     /*

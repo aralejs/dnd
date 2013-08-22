@@ -15,6 +15,7 @@
 <div id="container1" class="container">
     <div id="drag1" class="drag"></div>
 </div>
+
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag1', {containment: '#container1'}) ;
@@ -26,6 +27,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 <div id="container2" class="container">
     <div id="drag2" class="drag"></div>
 </div>
+
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag2', {containment: '#container2', axis: 'x'}) ;
@@ -38,6 +40,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 <div id="container3" class="container">
     <div id="drag3" class="drag"></div>
 </div>
+
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag3', {containment: '#container3', revert: true, revertDuration: 600, visible: true}) ;
@@ -47,7 +50,9 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ## 4. 带有放置元素的拖放
 
 <div id="drag4" class="drag"></div>
+<br />
 <div id="drop1" class="container"></div>
+
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag4', {drop: '#drop1'}) ;
@@ -57,7 +62,9 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ## 5. 带有处理事件的拖放
 
 <div id="drag5" class="drag"></div>
+<br />
 <div id="drop2" class="container"></div>
+
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
     
@@ -78,7 +85,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
             dropping.removeClass('over') ;
         })
         dnd.on('drop', function(dataTransfer, dragging, dropping){
-            if(!$.isEmptyObject(dataTransfer) && typeof(dataTransfer.data) !== 'undefined'){
+            if(typeof(dataTransfer.data) !== 'undefined'){
                 dropping.text(dataTransfer.data) ;
             }
         })
@@ -91,6 +98,13 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
     proxy.src = 'http://tp3.sinaimg.cn/1748374882/180/40020642911/1' ;
 });
 ````
+
+
+##6. 利用data-attr来实现拖放
+
+<div id="drag6" class="drag" data-dnd=true data-drop="#drop3"></div>
+<br />
+<div id="drop3" class="container"></div>
 
 
 
