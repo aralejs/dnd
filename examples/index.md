@@ -2,6 +2,7 @@
 
 ---
 
+
 <style>
     .container {width:500px; height:200px; background:#CCC;}
     .drag {width:50px; height:50px; background:#07B1EE;}
@@ -10,11 +11,14 @@
 
 
 
+
 ## 1. 带有边界的拖放
 
+````html
 <div id="container1" class="container">
     <div id="drag1" class="drag"></div>
 </div>
+````
 
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
@@ -24,9 +28,11 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 
 ## 2. 带有方向的拖放
 
+````html
 <div id="container2" class="container">
     <div id="drag2" class="drag"></div>
 </div>
+````
 
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
@@ -37,9 +43,11 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 
 ## 3. 带有返回且源节点不移动的拖放
 
+````html
 <div id="container3" class="container">
     <div id="drag3" class="drag"></div>
 </div>
+````
 
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
@@ -49,9 +57,11 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 
 ## 4. 带有放置元素的拖放
 
+````html
 <div id="drag4" class="drag"></div>
 <br />
 <div id="drop1" class="container"></div>
+````
 
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
@@ -61,9 +71,11 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 
 ## 5. 带有处理事件的拖放
 
+````html
 <div id="drag5" class="drag"></div>
 <br />
 <div id="drop2" class="container"></div>
+````
 
 ````javascript
 seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
@@ -102,9 +114,15 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 
 ##6. 利用data-attr来实现拖放
 
+````html
 <div id="drag6" class="drag" data-dnd=true data-drop="#drop3"></div>
 <br />
 <div id="drop3" class="container"></div>
+````
+
+````javascript
+seajs.use('arale/dnd/1.0.0/dnd') ;
+````
 
 
 
