@@ -456,7 +456,7 @@ define(function(require, exports, module){
         value = dnd.get('drop') ;
         $.each($(value), function(index, elem){
             if(elem.nodeType === 1 && elem !== element.get(0) &&
-                    elem != dnd.get('proxy').get(0)){
+                    elem !== dnd.get('proxy').get(0)){
                 flag = true ;
                 return false ; // 跳出each
             }
