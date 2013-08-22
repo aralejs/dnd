@@ -97,7 +97,7 @@ define(function(require, exports, module){
                     // 通过data-dnd=true触发, 此时不支持dataTransfer和一系列事件
                     if(dnd === true){
                         dnd = new Dnd(event.target, getConfig(event.target)) ;
-                    } else if(dnd instanceof Dnd){
+                    } else if(dnd instanceof Dnd === true){
                         dnd = $(event.target).data('dnd') ;
                     } else{
                         return ;
@@ -122,7 +122,7 @@ define(function(require, exports, module){
                 break ;
             
             case 'mousemove':
-                if(draggingPre !== false){
+                if(draggingPre === true){
                     
                     // 开始拖放
                     executeDragStart() ;
