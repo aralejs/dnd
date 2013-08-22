@@ -275,7 +275,7 @@ define(function(require, exports, module){
                         
                         dropping = $(elem) ;
                         obj.trigger('dragenter', dragging, dropping) ;
-                        return ;
+                        return false ; // 跳出each
                     }
                 }) ;
             } else{
