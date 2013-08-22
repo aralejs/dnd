@@ -70,7 +70,7 @@
 
 ### dragstart  (dataTransfer, dragging, dropping)
 拖放开始时触发（按下鼠标并且至少移动1px）,常用来设置拖放数据dataTransfer
->注：(dataTransfer, dragging, dropping)为处理函数参数；dropping为空,此处为保持参数一致
+>注：(dataTransfer, dragging, dropping)为处理函数参数;dropping为空,此处为保持参数一致
 	
 ### drag (dragging, dropping)
 拖放中一直触发,直到鼠标释放
