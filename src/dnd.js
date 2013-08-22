@@ -14,7 +14,7 @@ define(function(require, exports, module){
         diffX = 0,
         diffY = 0, // diffX, diffY记录鼠标点击离源节点的距离
         obj = null, // 存储当前拖放的dnd
-        dataTransfer = {} ; // 存储拖放信息，在dragstart可设置，在drop中可读取
+        dataTransfer = {} ; // 存储拖放信息,在dragstart可设置,在drop中可读取
     
     /*
      * constructor function
@@ -49,7 +49,7 @@ define(function(require, exports, module){
             config = $.extend(config, {element: $(elem).eq(0)}) ;
             Dnd.superclass.initialize.call(this, config) ;
             
-            // 如果元素原始是relative，记录下left和top
+            // 如果元素原始是relative,记录下left和top
             if(this.get('element').css('position') === 'relative'){
                 this.get('element').data('drag-left',
                         this.get('element').css('left')) ;
@@ -71,26 +71,28 @@ define(function(require, exports, module){
         },
         
         /*
-         * 开启页面Dnd功能，绑定鼠标事件
+         * 开启页面Dnd功能,绑定鼠标,ecs事件
         */
         open: function(){
             $(document).on('mousedown', handleDragEvent) ;
             $(document).on('mousemove', handleDragEvent) ;
             $(document).on('mouseup', handleDragEvent) ;
+            $(document).on('keydown', handleDragEvent) ;
         },
         
         /*
-         * 关闭页面Dnd功能，解绑鼠标事件
+         * 关闭页面Dnd功能,解绑鼠标,esc事件
         */
         close: function(){
             $(document).off('mousedown', handleDragEvent) ;
             $(document).off('mousemove', handleDragEvent) ;
             $(document).off('mouseup', handleDragEvent) ;
+            $(document).off('keydown', handleDragEvent) ;
         }
     }) ;
     
     /* 
-     * 核心部分，处理鼠标事件，实现拖放逻辑
+     * 核心部分,处理鼠标,esc事件,实现拖放逻辑
     */
     function handleDragEvent(event){
         var dnd = null ;
@@ -173,11 +175,29 @@ define(function(require, exports, module){
                     obj = null ;
                 }
                 break ;
+            
+            case 'keydown':
+                if(dragging !== null && event.which === 27){
+                    // 恢复光标
+                    dragging.css('cursor', 'default') ;
+                    dragging.focus() ;
+                    
+                    dragging = null ;
+                    
+                    // 返回源节点
+                    executeRevert(true) ;
+                    
+                    // 此处传递的dragging为源节点element
+                    obj.trigger('dragend', obj.get('element'), dropping) ;
+                    obj = null ;
+                    dropping = null ;
+                }
+                break ;
         }
     }
     
     /*
-     * 显示proxy， 按照设置显示或隐藏源节点element
+     * 显示proxy, 按照设置显示或隐藏源节点element
      * 开始拖放
     */
     function executeDragStart(){
@@ -249,7 +269,7 @@ define(function(require, exports, module){
     }
     
     /*
-     * 根据dragging和dropping位置来判断是否要dragenter，dragleave和dragover并执行
+     * 根据dragging和dropping位置来判断是否要dragenter,dragleave和dragover并执行
     */
     function executeDragEnterLeaveOver(){
         var element = obj.get('element'),
@@ -294,7 +314,7 @@ define(function(require, exports, module){
     
     /*
      * 根据dropping判断是否drop并执行
-     * 当dragging不在dropping内且不需要revert时，将dragging置于dropping中央
+     * 当dragging不在dropping内且不需要revert时,将dragging置于dropping中央
     */
     function executeDrop(){
         var element = obj.get('element'),
@@ -320,9 +340,10 @@ define(function(require, exports, module){
     
     /*
      * 根据revert判断是否要返回并执行
-     * 若有指定放置元素且dropping为null，则自动回到原处
+     * 若有指定放置元素且dropping为null,则自动回到原处
+     * flag为true表示必须返回的,目前用于esc
     */
-    function executeRevert(){
+    function executeRevert(flag){
         var element = obj.get('element'),
             xdragging = obj.get('proxy'),
             drop = obj.get('drop'),
@@ -330,10 +351,9 @@ define(function(require, exports, module){
             revertDuration = obj.get('revertDuration'),
             xleft = 0,
             xtop = 0 ;
-        
-        if(revert === true ||
-                (dropping === null && drop !== null)){
             
+        if(revert === true || flag === true ||
+                (dropping === null && drop !== null)){
             /* 
              * 代理元素返回源节点处
             */
@@ -386,7 +406,7 @@ define(function(require, exports, module){
     /*
      * 检查配置合法性
      * 不合法的配置采用默认配置
-     * 每次拖放时都检查一次，防止用户修改配置
+     * 每次拖放时都检查一次,防止用户修改配置
     */
     function handleConfig(dnd){
         var element = dnd.get('element'),
@@ -408,9 +428,9 @@ define(function(require, exports, module){
         }
         
         /* 
-         * proxy不能为element本身，containment
+         * proxy不能为element本身,containment
          * 设置proxy并插入文档
-         * 若在mouseover中插入，会造成抖动
+         * 若在mouseover中插入,会造成抖动
         */
         value = dnd.get('proxy') ;
         if($(value).length === 0 || $(value).get(0).nodeType !== 1 ||
@@ -429,7 +449,7 @@ define(function(require, exports, module){
         proxy.appendTo('body') ;
         
         /*
-         * 放置元素不能是elment本身，proxy
+         * 放置元素不能是elment本身,proxy
          * 若drop中没一个元素符合要求则不合法
          * 
         */
