@@ -38,11 +38,8 @@ define(function(require, exports, module){
         }, 
         
         initialize: function(elem, config){
-            
-            /* 
-             * 检查源节点elem合法性
-             * 初始化dnd
-            */
+             
+            // 检查源节点elem合法性, 初始化dnd
             if($(elem).length === 0 || $(elem).get(0).nodeType !== 1){
                 $.error('element error!') ;
             }
@@ -61,18 +58,14 @@ define(function(require, exports, module){
             this.get('element').data('dnd', this) ;
         },
         
-        /*
-         * 拖放期间不能设置配置
-        */
+        // 拖放期间不能设置配置
         set: function(option, value){
             if(obj !== this){
                 Dnd.superclass.set.call(this, option, value, {override: true}) ;
             }
         },
         
-        /*
-         * 开启页面Dnd功能,绑定鼠标,ecs事件
-        */
+        // 开启页面Dnd功能,绑定鼠标,ecs事件
         open: function(){
             $(document).on('mousedown', handleDragEvent) ;
             $(document).on('mousemove', handleDragEvent) ;
@@ -80,9 +73,7 @@ define(function(require, exports, module){
             $(document).on('keydown', handleDragEvent) ;
         },
         
-        /*
-         * 关闭页面Dnd功能,解绑鼠标,esc事件
-        */
+        // 关闭页面Dnd功能,解绑鼠标,esc事件
         close: function(){
             $(document).off('mousedown', handleDragEvent) ;
             $(document).off('mousemove', handleDragEvent) ;
@@ -91,7 +82,7 @@ define(function(require, exports, module){
         }
     }) ;
     
-    /* 
+    /*
      * 核心部分,处理鼠标,esc事件,实现拖放逻辑
     */
     function handleDragEvent(event){
@@ -102,26 +93,22 @@ define(function(require, exports, module){
                 if(event.which === 1){
                     dnd = $(event.target).data('dnd') ;
                     
-                    /* 
-                     * 判断是否为可拖放元素
-                     * 用构造函数实例化 或者 
-                     * 通过data-dnd=true 触发, 此时不支持dataTransfer和事件
-                    */
+                    // 判断是否为可拖放元素 用构造函数实例化或者 
+                    // 通过data-dnd=true触发, 此时不支持dataTransfer和一系列事件
                     if(dnd === true){
                         dnd = new Dnd(event.target, getConfig(event.target)) ;
                     } else if(dnd instanceof Dnd){
                         dnd = $(event.target).data('dnd') ;
                     } else{
-                        return true ;
+                        return ;
                     }
                     
                     // 源节点不允许拖放则返回
                     if(dnd.get('disabled') === true) return ;
                     
-                    /*
-                     * 处理配置合法性
-                    */
+                    // 处理配置合法性
                     handleConfig(dnd) ;
+                    
                     obj = dnd ;
                     diffX = event.pageX - obj.get('element').offset().left ;
                     diffY = event.pageY - obj.get('element').offset().top ;
@@ -129,7 +116,7 @@ define(function(require, exports, module){
                     // draggingpre主要是防止用户点击而不是拖放
                     draggingPre = true ;
                     
-                    // 阻止 默认光标和选中文本
+                    // 阻止默认选中文本
                     event.preventDefault() ;
                 }
                 break ;
@@ -149,7 +136,7 @@ define(function(require, exports, module){
                     // 是否要dragenter, dragleave和dragover并执行
                     executeDragEnterLeaveOver() ;
                     
-                    // 阻止 默认光标和选中文本
+                    // 阻止默认选中文本
                     event.preventDefault() ;
                 }
                 break ;
@@ -184,6 +171,7 @@ define(function(require, exports, module){
             
             case 'keydown':
                 if(dragging !== null && event.which === 27){
+                    
                     // 恢复光标
                     dragging.css('cursor', 'default') ;
                     dragging.focus() ;
@@ -360,9 +348,8 @@ define(function(require, exports, module){
             
         if(revert === true || flag === true ||
                 (dropping === null && drop !== null)){
-            /* 
-             * 代理元素返回源节点处
-            */
+            
+            //代理元素返回源节点处
             if(typeof element.data('drag-left') !== 'undefined'){
                 xleft = element.data('drag-left') ;
                 xtop = element.data('drag-top') ;
@@ -385,9 +372,7 @@ define(function(require, exports, module){
             }) ;
         } else{
             
-            /* 
-             * 源节点移动到代理元素处
-            */
+            // 源节点移动到代理元素处
             xleft = xdragging.offset().left - element.offset().left ;
             xtop = xdragging.offset().top -  element.offset().top ;
             if(element.css('position') === 'relative'){
@@ -420,10 +405,8 @@ define(function(require, exports, module){
             flag = false,
             value ;
         
-        /*
-         * containment不能为element本身
-         * element也不能在containment外
-        */
+        // containment不能为element本身
+        // element也不能在containment外
         value = dnd.get('containment') ;
         if($(value).length === 0 || $(value).get(0).nodeType !== 1 ||
                 $(value).get(0) === element.get(0) ||
@@ -433,11 +416,8 @@ define(function(require, exports, module){
             dnd.set('containment', $(value).eq(0)) ;
         }
         
-        /* 
-         * proxy不能为element本身,containment
-         * 设置proxy并插入文档
-         * 若在mouseover中插入,会造成抖动
-        */
+        // proxy不能为element本身, containment
+        // 设置proxy并插入文档, 若在mouseover中插入,会造成抖动
         value = dnd.get('proxy') ;
         if($(value).length === 0 || $(value).get(0).nodeType !== 1 ||
                 $(value).get(0) === element.get(0) ||
@@ -454,11 +434,8 @@ define(function(require, exports, module){
         proxy.css('visibility', 'hidden') ;
         proxy.appendTo('body') ;
         
-        /*
-         * 放置元素不能是elment本身,proxy
-         * 若drop中没一个元素符合要求则不合法
-         * 
-        */
+        // 放置元素不能是elment本身, proxy
+        // 若drop中没一个元素符合要求则不合法
         value = dnd.get('drop') ;
         $.each($(value), function(index, elem){
             if(elem.nodeType === 1 && elem !== element.get(0) &&
@@ -510,7 +487,7 @@ define(function(require, exports, module){
     }
     
     /*
-     * 根据元素的data-attr属性来获取配置
+     * 根据元素的data-attr属性来获取配置并返回
     */
     function getConfig(element){
         var config = {} ;
