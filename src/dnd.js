@@ -46,12 +46,17 @@ define(function(require, exports, module){
             config = $.extend({element: $(elem).eq(0)}, config) ;
             Dnd.superclass.initialize.call(this, config) ;
             
-            // 如果元素原始是relative,记录下left和top
-            if(this.get('element').css('position') === 'relative'){
-                this.get('element').data('drag-left',
-                        this.get('element').css('left')) ;
-                this.get('element').data('drag-top',
-                        this.get('element').css('top')) ;
+            // 记录下源节点初始left和top
+            if(this.get('element').data('drag-left') !== undefined){
+                if(this.get('element').css('position') === 'relative'){
+                    this.get('element').data('drag-left',
+                            this.get('element').css('left')) ;
+                    this.get('element').data('drag-top',
+                            this.get('element').css('top')) ;
+                } else{
+                    this.get('element').data('drag-left', 0) ;
+                    this.get('element').data('drag-top', 0) ;
+                }
             }
             
             // 在源节点上存储dnd
@@ -351,15 +356,10 @@ define(function(require, exports, module){
                 (dropping === null && drop !== null)){
             
             //代理元素返回源节点处
-            if(typeof element.data('drag-left') !== 'undefined'){
-                xleft = isNaN(parseInt(element.data('drag-left'))) ? 0 : 
-                        parseInt(element.data('drag-left')) ;
-                xtop = isNaN(parseInt(element.data('drag-top'))) ? 0 : 
-                       parseInt(element.data('drag-top')) ;
-            } else{
-                xleft = 0 ;
-                xtop = 0 ;
-            }
+            xleft = isNaN(parseInt(element.data('drag-left'))) ? 0 : 
+                    parseInt(element.data('drag-left')) ;
+            xtop = isNaN(parseInt(element.data('drag-top'))) ? 0 : 
+                   parseInt(element.data('drag-top')) ;
             if(element.css('position') === 'relative'){
                 element.css('left', xleft) ;
                 element.css('top', xtop) ;
