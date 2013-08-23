@@ -38,12 +38,12 @@ define(function(require, exports, module){
         }, 
         
         initialize: function(elem, config){
-             
+            
             // 检查源节点elem合法性, 初始化dnd
             if($(elem).length === 0 || $(elem).get(0).nodeType !== 1){
                 $.error('element error!') ;
             }
-            config = $.extend(config, {element: $(elem).eq(0)}) ;
+            config = $.extend({element: $(elem).eq(0)}, config) ;
             Dnd.superclass.initialize.call(this, config) ;
             
             // 如果元素原始是relative,记录下left和top
@@ -96,7 +96,8 @@ define(function(require, exports, module){
                     // 判断是否为可拖放元素 用构造函数实例化或者 
                     // 通过data-dnd=true触发, 此时不支持dataTransfer和一系列事件
                     if(dnd === true){
-                        dnd = new Dnd(event.target, getConfig(event.target)) ;
+                        dnd = new Dnd(event.target, 
+                              $(event.target).data('config')) ;
                     } else if(dnd instanceof Dnd === true){
                         dnd = $(event.target).data('dnd') ;
                     } else{
@@ -351,8 +352,10 @@ define(function(require, exports, module){
             
             //代理元素返回源节点处
             if(typeof element.data('drag-left') !== 'undefined'){
-                xleft = element.data('drag-left') ;
-                xtop = element.data('drag-top') ;
+                xleft = isNaN(parseInt(element.data('drag-left'))) ? 0 : 
+                        parseInt(element.data('drag-left')) ;
+                xtop = isNaN(parseInt(element.data('drag-top'))) ? 0 : 
+                       parseInt(element.data('drag-top')) ;
             } else{
                 xleft = 0 ;
                 xtop = 0 ;
@@ -484,45 +487,6 @@ define(function(require, exports, module){
         if(typeof value !== 'string'){
             dnd.set('dropCursor', 'copy') ;
         }
-    }
-    
-    /*
-     * 根据元素的data-attr属性来获取配置并返回
-    */
-    function getConfig(element){
-        var config = {} ;
-        
-        if($(element).data('containment') !== undefined){
-            config.containment = $(element).data('containment') ;
-        }
-        if($(element).data('proxy') !== undefined){
-            config.proxy = $(element).data('proxy') ;
-        }
-        if($(element).data('drop') !== undefined){
-            config.drop = $(element).data('drop') ;
-        }
-        if($(element).data('axis') !== undefined){
-            config.axis = $(element).data('axis') ;
-        }
-        if($(element).data('visible') !== undefined){
-            config.visible = $(element).data('visible') ;
-        }
-        if($(element).data('revert') !== undefined){
-            config.revert = $(element).data('revert') ;
-        }
-        if($(element).data('revertDuration') !== undefined){
-            config.revertDuration = $(element).data('revertDuration') ;
-        }
-        if($(element).data('disabled') !== undefined){
-            config.disabled = $(element).data('disabled') ;
-        }
-        if($(element).data('dragCursor') !== undefined){
-            config.dragCursor = $(element).data('dragCursor') ;
-        }
-        if($(element).data('dropCursor') !== undefined){
-            config.dropCursor = $(element).data('dropCursor') ;
-        }
-        return config ;
     }
     
     /*

@@ -21,7 +21,7 @@
 ````
 
 ````javascript
-seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+seajs.use(['dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag1', {containment: '#container1'}) ;
 });
 ````
@@ -35,7 +35,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+seajs.use(['dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag2', {containment: '#container2', axis: 'x'}) ;
 });
 ````
@@ -50,7 +50,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+seajs.use(['dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag3', {containment: '#container3', revert: true, revertDuration: 600, visible: true}) ;
 });
 ````
@@ -64,7 +64,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+seajs.use(['dnd', '$'], function(Dnd, $){
     var dnd = new Dnd('#drag4', {drop: '#drop1'}) ;
 });
 ````
@@ -78,7 +78,7 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
+seajs.use(['dnd', '$'], function(Dnd, $){
     
     var proxy = document.createElement('img'),
         dnd = null ;
@@ -115,13 +115,20 @@ seajs.use(['arale/dnd/1.0.0/dnd', '$'], function(Dnd, $){
 ##6. 利用data-attr来实现拖放
 
 ````html
-<div id="drag6" class="drag" data-dnd=true data-drop="#drop3"></div>
+<div id="drag6" class="drag" data-dnd=true 
+data-config='{"drop": "#drop3"}'></div>
 <br />
 <div id="drop3" class="container"></div>
 ````
 
 ````javascript
-seajs.use('arale/dnd/1.0.0/dnd') ;
+seajs.use(['dnd', '$'], function(Dnd, $){
+    $('#drag6').click(function(){
+        // 修改配置, 注意要重置dnd为true
+        $(this).data('dnd', true) ; // arale/dnd/1.0.0/dnd 应为 dnd
+        $(this).data('config', null) ;
+    }) ;
+}) ;
 ````
 
 

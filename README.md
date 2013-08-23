@@ -104,8 +104,8 @@ draging为源节点元素, dropping为放置元素;
 ## data-attr实现拖放
 
 ###在data-attr上进行配置
-如: data-containment, data-axis...
->注: 这种方式不支持dataTransfer和一系列事件，只是简单拖放
+data-dnd=true data-config为JSON字符串, 详细见演示
+>注: 这种方式不支持dataTransfer和一系列事件, 只是简单拖放
 
 
 
