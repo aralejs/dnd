@@ -34,10 +34,12 @@ define(function(require, exports, module){
             revertDuration: 500,
             disabled: false,
             dragCursor: 'move',
-            dropCursor: 'copy'
+            dropCursor: 'copy',
+            zIndex: 9999 
         }, 
         
         initialize: function(elem, config){
+            var element = null ;
             
             // 检查源节点elem合法性, 初始化dnd
             if($(elem).length === 0 || $(elem).get(0).nodeType !== 1){
@@ -45,22 +47,19 @@ define(function(require, exports, module){
             }
             config = $.extend({element: $(elem).eq(0)}, config) ;
             Dnd.superclass.initialize.call(this, config) ;
+            element = this.get('element') ;
             
-            // 记录下源节点初始left和top
-            if(this.get('element').data('drag-left') !== undefined){
-                if(this.get('element').css('position') === 'relative'){
-                    this.get('element').data('drag-left',
-                            this.get('element').css('left')) ;
-                    this.get('element').data('drag-top',
-                            this.get('element').css('top')) ;
+            // 记录下源节点初始style
+            if(element.data('style') === undefined){
+                if(element.attr('style') === undefined){
+                    element.data('style', '') ;
                 } else{
-                    this.get('element').data('drag-left', 0) ;
-                    this.get('element').data('drag-top', 0) ;
+                    element.data('style', element.attr('style')) ;
                 }
             }
             
             // 在源节点上存储dnd
-            this.get('element').data('dnd', this) ;
+            element.data('dnd', this) ;
         },
         
         // 拖放期间不能设置配置
@@ -204,12 +203,14 @@ define(function(require, exports, module){
         var element = obj.get('element'),
             proxy = obj.get('proxy'),
             visible = obj.get('visible'),
-            dragCusor = obj.get('dragCursor') ;
+            dragCusor = obj.get('dragCursor'),
+            zIndex = obj.get('zIndex') ;
         
         // 按照设置显示或隐藏element
         if(visible === false){
             element.css('visibility', 'hidden') ;
         }
+        proxy.css('z-index', zIndex) ;
         proxy.css('visibility', 'visible') ;
         proxy.css('cursor', dragCusor) ;
         proxy.focus() ;
@@ -350,21 +351,17 @@ define(function(require, exports, module){
             revert = obj.get('revert'),
             revertDuration = obj.get('revertDuration'),
             xleft = 0,
-            xtop = 0 ;
+            xtop = 0,
+            visible = obj.get('visible') ;
             
         if(revert === true || flag === true ||
                 (dropping === null && drop !== null)){
             
-            //代理元素返回源节点处
-            if(element.css('position') === 'relative'){
-                xleft = isNaN(parseInt(element.data('drag-left'))) ? 0 : 
-                        parseInt(element.data('drag-left')) ;
-                xtop = isNaN(parseInt(element.data('drag-top'))) ? 0 : 
-                       parseInt(element.data('drag-top')) ;
-                element.css('left', xleft) ;
-                element.css('top', xtop) ;
+            //代理元素返回源节点初始位置
+            element.attr('style', element.data('style')) ;
+            if(visible === false){
+                element.css('visibility', 'hidden') ;
             }
-            
             xdragging.animate({left: element.offset().left,
                     top: element.offset().top},
                     revertDuration, function(){
@@ -486,6 +483,11 @@ define(function(require, exports, module){
         value = dnd.get('dropCursor') ;
         if(typeof value !== 'string'){
             dnd.set('dropCursor', 'copy') ;
+        }
+        
+        value = dnd.get('zIndex') ;
+        if(typeof value !== 'number'){
+            dnd.set('zIndex', 9999) ;
         }
     }
     

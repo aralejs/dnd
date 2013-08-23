@@ -116,7 +116,7 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 ````html
 <div id="drag6" class="drag" data-dnd=true 
-data-config='{"drop": "#drop3"}'></div>
+data-config='{"drop": "#drop3", "zIndex": 99}'></div>
 <br />
 <div id="drop3" class="container"></div>
 ````

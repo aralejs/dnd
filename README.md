@@ -44,6 +44,9 @@
 ### dropCursor    string
 拖放过程中进入放置元素drop时光标的形状,默认为"copy"
 
+### zIndex number
+代理元素proxy拖放过程中的z-index, 默认为9999
+
 
 ## API
 
