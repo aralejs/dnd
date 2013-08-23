@@ -356,11 +356,11 @@ define(function(require, exports, module){
                 (dropping === null && drop !== null)){
             
             //代理元素返回源节点处
-            xleft = isNaN(parseInt(element.data('drag-left'))) ? 0 : 
-                    parseInt(element.data('drag-left')) ;
-            xtop = isNaN(parseInt(element.data('drag-top'))) ? 0 : 
-                   parseInt(element.data('drag-top')) ;
             if(element.css('position') === 'relative'){
+                xleft = isNaN(parseInt(element.data('drag-left'))) ? 0 : 
+                        parseInt(element.data('drag-left')) ;
+                xtop = isNaN(parseInt(element.data('drag-top'))) ? 0 : 
+                       parseInt(element.data('drag-top')) ;
                 element.css('left', xleft) ;
                 element.css('top', xtop) ;
             }
