@@ -98,7 +98,7 @@ draging为源节点元素, dropping为放置元素
 ### dragend (dragging, dropping)
 draging为源节点元素, dropping为放置元素; 
 拖放结束后触发, 常和dragleave处理相同, 用来取消dragenter中的设置
->注: 当没触发drop时,dropping为null; 按esc时会取消这次拖放,但仍会触发dragend
+>注: 当没触发drop时,dropping为null; 按esc时会取消拖放回到源节点原始位置,但仍会触发dragend
 
 
 ## data-attr实现拖放
