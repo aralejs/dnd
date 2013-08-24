@@ -73,8 +73,8 @@
 ## 事件
 
 ### dragstart  (dataTransfer, dragging, dropping)
-dataTransfer为拖放数据, draging为代理元素, dropping为null; 拖放开始时触发（按下鼠标并且至少移动1px), 常用来设置拖放数据dataTransfer
->注: dropping为空,此处为保持参数一致
+dataTransfer为拖放数据, draging为代理元素(均为jquery对象), dropping为null; 拖放开始时触发（按下鼠标并且至少移动1px), 常用来设置拖放数据dataTransfer
+>注: dropping为空,此处为保持参数一致; 
 	
 ### drag (dragging, dropping)
 draging为代理元素, dropping为目标元素
