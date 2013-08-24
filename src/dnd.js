@@ -277,13 +277,10 @@ define(function(require, exports, module){
             drop = obj.get('drop'),
             dragCursor = obj.get('dragCursor'),
             dropCursor = obj.get('dropCursor'),
-            xleft = 0,
-            xtop = 0 ;
-        
-        if(drop !== null){
-            xleft = dragging.offset().left + diffX ;
+            xleft = dragging.offset().left + diffX,
             xtop = dragging.offset().top + diffY ;
-                        
+        
+        if(drop !== null){                    
             if(dropping === null){
                 $.each(drop, function(index, elem){
                     

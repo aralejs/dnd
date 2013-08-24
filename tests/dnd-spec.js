@@ -26,18 +26,14 @@ define(function(require){
       });
       
       it('instance', function(){
-          /*
-           * 无元素参数Dnd抛出异常
-          */
+          // 无元素参数Dnd抛出异常
           try{
               dnd = new Dnd() ;
           } catch(error){
               expect(error.message).to.be('element error!') ;
           }
           
-          /*
-           * 一般构造
-          */
+          // 一般构造
           dnd = new Dnd('#drag1', {containment: '#container1'}) ;
           expect(dnd.get('element').get(0)).to.be($('#drag1').get(0)) ;
           expect(dnd.get('containment')).to.be('#container1') ;
