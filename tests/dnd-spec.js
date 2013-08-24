@@ -10,9 +10,9 @@ define(function(require){
                      '.container{width:500px; height:200px;background:#CCC;}' +
                      '.drag{width:50px; height:50px;background:#07B1EE;}' +
                      '</style>' +
-                     '<div id="container1" class="container">' +
+                     '<div id="wrap"><div id="container1" class="container">' +
                      '<div id="drag1" class="drag"></div></div><br/>' +
-                     '<div id="drop1" class="container"></div>', 
+                     '<div id="drop1" class="container"></div></div>', 
           element = null,
           dnd = null ;
       
@@ -50,8 +50,11 @@ define(function(require){
           expect(dnd.get('zIndex')).to.be(9999) ;
           
           // 不合法配置mousedown后, 自动转化为默认配置
-          dnd = new Dnd('#drag1', {containment: '#drop1'}) ;
+          dnd = new Dnd('#drag1', {containment: '#drop1', proxy: '#drag1',
+                drop: '#drag1'}) ;
           expect(dnd.get('containment')).to.be('#drop1') ;
+          expect(dnd.get('proxy')).to.be('#drag1') ;
+          expect(dnd.get('drop')).to.be('#drag1') ;
           $('#drag1').on('mousedown', function(event){
               event.which = 1 ;
           }) ;
@@ -59,9 +62,13 @@ define(function(require){
           $(document).trigger('mouseup') ;
           setTimeout(function(){
               expect(dnd.get('containment')).to.be(null) ;
+              expect(dnd.get('proxy').get(0) !==   
+                      $('#drag1').get(0)).to.be(true) ;
+              expect(dnd.get('drop')).to.be(null) ;
               done() ;
           }, 80) ;
       });
+      
       
       it('drag', function(done){
           var originx = $('#drag1').offset().left ;
@@ -89,6 +96,7 @@ define(function(require){
               done() ;
           }, 80) ;
       }) ;
+      
       
       it('dataTransfer', function(done){
           var originx = $('#drag1').offset().left ;
@@ -122,6 +130,7 @@ define(function(require){
           }, 80) ;
       }) ;
       
+      
       it('containment & axis', function(done){
           var originx = $('#drag1').offset().left ;
               originy = $('#drag1').offset().top ;
@@ -150,8 +159,9 @@ define(function(require){
                       be($('#container1').offset().top) ;
               done() ;
           }, 80) ;
-      }) ;
+      }) ;  
       
+     
       it('revert', function(done){
           var originx = $('#drag1').offset().left ;
               originy = $('#drag1').offset().top ;
@@ -177,26 +187,8 @@ define(function(require){
               expect($('#drag1').offset().top).to.be(originy) ;
               done() ;
           }, 80) ;
-      }) ;
+      }) ; 
       
   });
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
