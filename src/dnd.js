@@ -347,9 +347,9 @@ define(function(require, exports, module){
             drop = obj.get('drop'),
             revert = obj.get('revert'),
             revertDuration = obj.get('revertDuration'),
+            visible = obj.get('visible'),
             xleft = 0,
-            xtop = 0,
-            visible = obj.get('visible') ;
+            xtop = 0 ;
             
         if(revert === true || flag === true ||
                 (dropping === null && drop !== null)){
