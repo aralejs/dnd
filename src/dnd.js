@@ -379,6 +379,9 @@ define(function(require, exports, module){
                 element.css('top',
                         (isNaN(parseInt(element.css('top'))) ? 0 : 
                         parseInt(element.css('top'))) + xtop) ;
+            } else if(element.css('position') === 'absolute'){
+                element.css('left', xdragging.offset().left) ;
+                element.css('top', xdragging.offset().top) ;
             } else{
                 element.css('position', 'relative') ;
                 element.css('left', xleft) ;
