@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "drag and drop",
   "homepage": "https://github.com/aralejs/dnd",
-  "author": "叁儿",
+  "author": "叁儿 <317713370@qq.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/aralejs/dnd.git"
@@ -18,7 +18,7 @@
     "output": ["dnd.js"],
     "alias": {
     	"$": "$",
-		"base": "arale/base/1.1.1/base"
+        "base": "arale/base/1.1.1/base"
     },
     "devAlias": {},
     "engines": {}
