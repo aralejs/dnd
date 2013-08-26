@@ -71,25 +71,25 @@ define(function(require, exports, module){
         
         // 开启页面Dnd功能,绑定鼠标,ecs事件
         open: function(){
-            $(document).on('mousedown', handleDragEvent) ;
-            $(document).on('mousemove', handleDragEvent) ;
-            $(document).on('mouseup', handleDragEvent) ;
-            $(document).on('keydown', handleDragEvent) ;
+            $(document).on('mousedown', handleEvent) ;
+            $(document).on('mousemove', handleEvent) ;
+            $(document).on('mouseup', handleEvent) ;
+            $(document).on('keydown', handleEvent) ;
         },
         
         // 关闭页面Dnd功能,解绑鼠标,esc事件
         close: function(){
-            $(document).off('mousedown', handleDragEvent) ;
-            $(document).off('mousemove', handleDragEvent) ;
-            $(document).off('mouseup', handleDragEvent) ;
-            $(document).off('keydown', handleDragEvent) ;
+            $(document).off('mousedown', handleEvent) ;
+            $(document).off('mousemove', handleEvent) ;
+            $(document).off('mouseup', handleEvent) ;
+            $(document).off('keydown', handleEvent) ;
         }
     }) ;
     
     /*
      * 核心部分,处理鼠标,esc事件,实现拖放逻辑
     */
-    function handleDragEvent(event){
+    function handleEvent(event){
         var dnd = null ;
         
         switch(event.type){
