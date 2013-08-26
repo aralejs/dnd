@@ -41,7 +41,7 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 
-## 3. 带有返回且源节点不移动的拖放
+## 3. 带有源节点显示的拖放
 
 ````html
 <div id="container3" class="container">
@@ -51,7 +51,7 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 ````javascript
 seajs.use(['dnd', '$'], function(Dnd, $){
-    var dnd = new Dnd('#drag3', {containment: '#container3', revert: true, revertDuration: 600, visible: true}) ;
+    var dnd = new Dnd('#drag3', {containment: '#container3', visible: true}) ;
 });
 ````
 
