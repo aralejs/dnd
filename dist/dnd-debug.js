@@ -64,23 +64,23 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
         },
         // 开启页面Dnd功能,绑定鼠标,ecs事件
         open: function() {
-            $(document).on("mousedown", handleDragEvent);
-            $(document).on("mousemove", handleDragEvent);
-            $(document).on("mouseup", handleDragEvent);
-            $(document).on("keydown", handleDragEvent);
+            $(document).on("mousedown", handleEvent);
+            $(document).on("mousemove", handleEvent);
+            $(document).on("mouseup", handleEvent);
+            $(document).on("keydown", handleEvent);
         },
         // 关闭页面Dnd功能,解绑鼠标,esc事件
         close: function() {
-            $(document).off("mousedown", handleDragEvent);
-            $(document).off("mousemove", handleDragEvent);
-            $(document).off("mouseup", handleDragEvent);
-            $(document).off("keydown", handleDragEvent);
+            $(document).off("mousedown", handleEvent);
+            $(document).off("mousemove", handleEvent);
+            $(document).off("mouseup", handleEvent);
+            $(document).off("keydown", handleEvent);
         }
     });
     /*
      * 核心部分,处理鼠标,esc事件,实现拖放逻辑
     */
-    function handleDragEvent(event) {
+    function handleEvent(event) {
         var dnd = null;
         switch (event.type) {
           case "mousedown":
@@ -289,6 +289,9 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
             if (element.css("position") === "relative") {
                 element.css("left", (isNaN(parseInt(element.css("left"))) ? 0 : parseInt(element.css("left"))) + xleft);
                 element.css("top", (isNaN(parseInt(element.css("top"))) ? 0 : parseInt(element.css("top"))) + xtop);
+            } else if (element.css("position") === "absolute") {
+                element.css("left", xdragging.offset().left);
+                element.css("top", xdragging.offset().top);
             } else {
                 element.css("position", "relative");
                 element.css("left", xleft);
