@@ -184,7 +184,7 @@ define(function(require, exports, module){
                     dragging.focus() ;
                     dragging = null ;
                     
-                    // 返回源节点
+                    // 返回源节点初始位置
                     executeRevert(true) ;
                     
                     // 此处传递的dragging为源节点element
