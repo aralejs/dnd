@@ -113,7 +113,6 @@ define(function(require, exports, module){
                     
                     // 处理配置合法性
                     handleConfig(dnd) ;
-                    
                     obj = dnd ;
                     diffX = event.pageX - obj.get('element').offset().left ;
                     diffY = event.pageY - obj.get('element').offset().top ;
@@ -152,7 +151,6 @@ define(function(require, exports, module){
                     // 恢复光标
                     dragging.css('cursor', 'default') ;
                     dragging.focus() ;
-                    
                     dragging = null ;
                     
                     // 根据dropping判断是否drop并执行
@@ -180,7 +178,6 @@ define(function(require, exports, module){
                     // 恢复光标
                     dragging.css('cursor', 'default') ;
                     dragging.focus() ;
-                    
                     dragging = null ;
                     
                     // 返回源节点
