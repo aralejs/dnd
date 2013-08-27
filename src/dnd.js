@@ -16,6 +16,8 @@ define(function(require, exports, module){
         obj = null, // 存储当前拖放的dnd
         dataTransfer = {} ; // 存储拖放信息,在dragstart可设置,在drop中可读取
     
+    
+    
     /*
      * constructor function
     */
@@ -85,6 +87,8 @@ define(function(require, exports, module){
             $(document).off('keydown', handleEvent) ;
         }
     }) ;
+    
+    
     
     /*
      * 核心部分,处理鼠标,esc事件,实现拖放逻辑
@@ -192,6 +196,8 @@ define(function(require, exports, module){
         }
     }
     
+    
+    
     /*
      * 显示proxy, 按照设置显示或隐藏源节点element
      * 开始拖放
@@ -217,6 +223,8 @@ define(function(require, exports, module){
         dragging = proxy ;
         obj.trigger('dragstart', dataTransfer, dragging, dropping) ;
     }
+    
+    
     
     /*
      * 根据边界和方向一起判断是否drag并执行
@@ -266,6 +274,8 @@ define(function(require, exports, module){
         obj.trigger('drag', dragging, dropping) ;
     }
     
+    
+    
     /*
      * 根据dragging和dropping位置来判断是否要dragenter,dragleave和dragover并执行
     */
@@ -307,6 +317,8 @@ define(function(require, exports, module){
         }
     }
     
+    
+    
     /*
      * 根据dropping判断是否drop并执行
      * 当dragging不在dropping内且不需要revert时,将dragging置于dropping中央
@@ -333,6 +345,8 @@ define(function(require, exports, module){
         }
     }
     
+    
+    
     /*
      * 根据revert判断是否要返回并执行
      * 若有指定放置元素且dropping为null,则自动回到原处
@@ -345,8 +359,8 @@ define(function(require, exports, module){
             revert = obj.get('revert'),
             revertDuration = obj.get('revertDuration'),
             visible = obj.get('visible'),
-            xleft = 0,
-            xtop = 0 ;
+            xleft = xdragging.offset().left - element.offset().left,
+            xtop = xdragging.offset().top -  element.offset().top ;
             
         if(revert === true || flag === true ||
                 (dropping === null && drop !== null)){
@@ -356,40 +370,42 @@ define(function(require, exports, module){
             if(visible === false){
                 element.css('visibility', 'hidden') ;
             }
+            
             xdragging.animate({left: element.offset().left,
-                    top: element.offset().top},
-                    revertDuration, function(){
-                
-                // 显示源节点 移除代理元素
+                    top: element.offset().top}, revertDuration, function(){
                 element.css('visibility', '') ;
                 xdragging.remove() ;
             }) ;
         } else{
             
             // 源节点移动到代理元素处
-            xleft = xdragging.offset().left - element.offset().left ;
-            xtop = xdragging.offset().top -  element.offset().top ;
             if(element.css('position') === 'relative'){
-                element.css('left', 
-                        (isNaN(parseInt(element.css('left'))) ? 0 : 
-                        parseInt(element.css('left'))) + xleft) ;
-                element.css('top',
-                        (isNaN(parseInt(element.css('top'))) ? 0 : 
-                        parseInt(element.css('top'))) + xtop) ;
+                xleft = (isNaN(parseInt(element.css('left'))) ? 0 : 
+                        parseInt(element.css('left'))) + xleft ;
+                xtop = (isNaN(parseInt(element.css('top'))) ? 0 : 
+                        parseInt(element.css('top'))) + xtop ;
             } else if(element.css('position') === 'absolute'){
-                element.css('left', xdragging.offset().left) ;
-                element.css('top', xdragging.offset().top) ;
+                xleft = xdragging.offset().left ;
+                xtop = xdragging.offset().top ;
             } else{
                 element.css('position', 'relative') ;
-                element.css('left', xleft) ;
-                element.css('top', xtop) ;
             }
             
-            // 显示源节点 移除代理元素
-            element.css('visibility', '') ;
-            xdragging.remove() ;
+            if(visible === false){
+                element.css('left', xleft) ;
+                element.css('top', xtop) ;
+                element.css('visibility', '') ;
+                xdragging.remove() ;
+            } else{
+                element.animate({left: xleft, top: xtop}, revertDuration, 
+                        function(){
+                    xdragging.remove() ;
+                }) ;  
+            }
         }
     }
+    
+    
     
     /*
      * 检查配置合法性
@@ -450,43 +466,38 @@ define(function(require, exports, module){
         value = dnd.get('axis') ;
         if(value !== 'x' && value !== 'y' && value !== false){
             dnd.set('axis', false) ;
-        }
-                
+        }       
         value = dnd.get('visible') ;
         if(typeof value !== 'boolean'){
             dnd.set('visible', false) ;
-        }
-                
+        }       
         value = dnd.get('revert') ;
         if(typeof value !== 'boolean'){
             dnd.set('revert', false) ;
-        }
-                
+        }       
         value = dnd.get('revertDuration') ;
         if(typeof value !== 'number'){
             dnd.set('revertDuration', 500) ;
         }
-        
         value = dnd.get('disabled') ;
         if(typeof value !== 'boolean'){
             dnd.set('disabled', false) ;
         }
-        
         value = dnd.get('dragCursor') ;
         if(typeof value !== 'string'){
             dnd.set('dragCursor', 'move') ;
         }
-        
         value = dnd.get('dropCursor') ;
         if(typeof value !== 'string'){
             dnd.set('dropCursor', 'copy') ;
-        }
-        
+        }   
         value = dnd.get('zIndex') ;
         if(typeof value !== 'number'){
             dnd.set('zIndex', 9999) ;
         }
     }
+    
+    
     
     /*
      * 判断元素B是否位于元素A内部 or 点(B, C)是否位于A内

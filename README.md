@@ -36,6 +36,7 @@
 
 ### revertDuration    number
 返回速度, 默认为500
+>注: 源节点显示(visible = true)时, 拖放结束时移动到拖放位置的速度也取此值
 
 ### disabled    boolean
 是否禁止该元素拖放, 默认false为不禁止
