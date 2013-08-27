@@ -120,8 +120,6 @@ define(function(require, exports, module){
                     obj = dnd ;
                     diffX = event.pageX - obj.get('element').offset().left ;
                     diffY = event.pageY - obj.get('element').offset().top ;
-                    
-                    // draggingpre主要是防止用户点击而不是拖放
                     draggingPre = true ;
                     
                     // 阻止默认选中文本
