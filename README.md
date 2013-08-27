@@ -3,9 +3,6 @@
 ---
 
 
-
----
-
 ## 配置说明
 
 ### element    element[Array]|selector
