@@ -151,8 +151,6 @@ define(function(require, exports, module){
             
             case 'mouseup':
                 if(dragging !== null){
-                    
-                    // 恢复光标
                     dragging.css('cursor', 'default') ;
                     dragging.focus() ;
                     dragging = null ;
@@ -178,8 +176,6 @@ define(function(require, exports, module){
             
             case 'keydown':
                 if(dragging !== null && event.which === 27){
-                    
-                    // 恢复光标
                     dragging.css('cursor', 'default') ;
                     dragging.focus() ;
                     dragging = null ;
