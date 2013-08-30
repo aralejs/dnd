@@ -15,12 +15,9 @@ define(function(require, exports, module){
         diffY = 0, // diffX, diffY记录鼠标点击离源节点的距离
         obj = null, // 存储当前拖放的dnd
         dataTransfer = {} ; // 存储拖放信息,在dragstart可设置,在drop中可读取
-    
-    
-    
-    /*
-     * constructor function
-    */
+        
+        
+
     Dnd = Base.extend({
         attrs: {
             element: {
