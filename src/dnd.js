@@ -6,7 +6,7 @@ define(function(require, exports, module){
         Base = require('base') ;
     
     /*
-     * static private variable(module global varibale)
+     * static private variable(module global variable)
     */
     var draggingPre = false, // 标识预拖放
         dragging = null, // 标识当前拖放的代理元素
