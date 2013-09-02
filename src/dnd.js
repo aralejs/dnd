@@ -8,12 +8,12 @@ define(function(require, exports, module){
      * static private variable(module global variable)
     */
     var draggingPre = false, // 标识预拖放
-        dragging = null, // 标识当前拖放的代理元素
-        dropping = null, // 标识当前的目标元素
+        dragging = null, // 当前拖放的代理元素
+        dropping = null, // 当前的目标元素
         diffX = 0,
         diffY = 0, // diffX, diffY记录鼠标点击离源节点的距离
         obj = null, // 存储当前拖放的dnd
-        dataTransfer = {} ; // 存储拖放信息,在dragstart可设置,在drop中可读取
+        dataTransfer = {} ; // 存储拖放信息, 在dragstart可设置,在drop中可读取
         
         
 
@@ -87,7 +87,7 @@ define(function(require, exports, module){
     
     
     /*
-     * 核心部分,处理鼠标按下、移动、释放以及ecs按下事件,实现拖放逻辑
+     * 核心部分, 处理鼠标按下、移动、释放以及ecs按下事件, 实现拖放逻辑
     */
     function handleEvent(event){
         var dnd = null ;
@@ -97,7 +97,7 @@ define(function(require, exports, module){
                 if(event.which === 1){
                     dnd = $(event.target).data('dnd') ;
                     
-                    // 判断是否为可拖放元素 用构造函数实例化或者 
+                    // 判断是否为可拖放元素 用构造函数实例化 或者 
                     // 通过data-dnd=true触发, 此时不支持dataTransfer和一系列事件
                     if(dnd === true){
                         dnd = new Dnd(event.target, 
@@ -267,7 +267,7 @@ define(function(require, exports, module){
     
     
     /*
-     * 根据dragging和dropping位置来判断是否要dragenter,dragleave和dragover并执行
+     * 根据dragging和dropping位置来判断是否dragenter, dragleave和dragover并执行
     */
     function executeDragEnterLeaveOver(){
         var element = obj.get('element'),
@@ -311,7 +311,7 @@ define(function(require, exports, module){
     
     /*
      * 根据dropping判断是否drop并执行
-     * 当dragging不在dropping内且不需要revert时,将dragging置于dropping中央
+     * 当dragging不在dropping内且不需要revert时, 将dragging置于dropping中央
     */
     function executeDrop(){
         var element = obj.get('element'),
@@ -339,8 +339,8 @@ define(function(require, exports, module){
     
     /*
      * 根据revert判断是否要返回并执行
-     * 若有指定放置元素且dropping为null,则自动回到原处
-     * flag为true表示必须返回的,目前用于esc
+     * 若drop不为null且dropping为null, 则自动回到原处
+     * flag为true表示必须返回的,目前用于esc按下触发返回
     */
     function executeRevert(flag){
         var element = obj.get('element'),
