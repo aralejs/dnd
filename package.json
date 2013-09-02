@@ -20,7 +20,7 @@
     "output": ["dnd.js"],
     "alias": {
     	"$": "$",
-        "base": "arale/base/1.1.1/base"
+       "base": "arale/base/1.1.1/base"
     }
   }
 }
