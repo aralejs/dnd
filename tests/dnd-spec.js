@@ -27,6 +27,13 @@ define(function(require){
       });
       
       
+      
+      /*
+       * 测试用例比较位置数值时，均加了parseInt
+       * 主要由于IE高版本浏览器(10 & 11)对offset返回值的差异
+      */
+      
+      
       // 测试构造
       it('instance', function(done){
           // 非法构造
@@ -90,6 +97,7 @@ define(function(require){
       });
       
       
+      
       // 测试两阶段拖放
       it('drag', function(done){
           var originx = $('#drag1').offset().left ;
@@ -115,11 +123,12 @@ define(function(require){
           $('#drag1').trigger('mousemove', [200, 300]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect($('#drag1').offset().left).to.be(originx + 400) ;
-              expect($('#drag1').offset().top).to.be(originy + 600) ;
+              expect(parseInt($('#drag1').offset().left)).to.be(originx + 400) ;
+              expect(parseInt($('#drag1').offset().top)).to.be(originy + 600) ;
               done() ;
           }, 80) ;
       }) ;
+      
       
       
       // 测试关闭页面拖放
@@ -145,12 +154,15 @@ define(function(require){
           $('#drag1').trigger('mousemove', [200, 300]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect($('#drag1').offset().left).to.be(originx) ;
-              expect($('#drag1').offset().top).to.be(originy) ;
+              expect($('#drag1').offset().left).
+                      to.be(parseInt(originx)) ;
+              expect($('#drag1').offset().top).
+                      to.be(parseInt(originy)) ;
               dnd.open() ;
               done() ;
           }, 80) ;
       }) ;
+      
       
       
       // 测试边界和方向约束
@@ -185,6 +197,7 @@ define(function(require){
       }) ; 
       
       
+      
       // 测试drop, 并且没完全置于drop元素中时，将自动将源节点置于drop中央
       it('drop in the center', function(done){
           var originx = $('#drag1').offset().left ;
@@ -207,17 +220,18 @@ define(function(require){
           $('#drag1').trigger('mousemove', [200, 220]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect($('#drag1').offset().left).to.
-                      be($('#drop1').offset().left + 
+              expect(parseInt($('#drag1').offset().left)).to.
+                      be(parseInt($('#drop1').offset().left + 
                       ($('#drop1').outerWidth() - 
-                      $('#drag1').outerWidth()) / 2) ;
-              expect($('#drag1').offset().top).to.
-                      be($('#drop1').offset().top + 
+                      $('#drag1').outerWidth()) / 2)) ;
+              expect(parseInt($('#drag1').offset().top)).to.
+                      be(parseInt($('#drop1').offset().top + 
                       ($('#drop1').outerHeight() - 
-                      $('#drag1').outerHeight()) / 2) ;
+                      $('#drag1').outerHeight()) / 2)) ;
               done() ;
           }, 80) ;
       }) ;
+      
       
       
       // 测试整个系列事件触发情况以及dataTransfer传输状况
@@ -273,6 +287,7 @@ define(function(require){
       }) ;
       
      
+     
       // 测试esc将返回源节点初始位置
       it('esc revert', function(done){
           var originx = $('#drag1').offset().left ;
@@ -299,8 +314,10 @@ define(function(require){
           $('#drag1').trigger('keydown') ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect($('#drag1').offset().left).to.be(originx) ;
-              expect($('#drag1').offset().top).to.be(originy) ;
+              expect(parseInt($('#drag1').offset().left)).
+                      to.be(parseInt(originx)) ;
+              expect(parseInt($('#drag1').offset().top)).
+                      to.be(parseInt(originy)) ;
               done() ;
           }, 1000) ;
       }) ; 

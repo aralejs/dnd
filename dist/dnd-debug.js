@@ -2,7 +2,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
     var Dnd = null;
     var $ = require("$-debug"), Base = require("arale/base/1.1.1/base-debug");
     /*
-     * static private variable(module global varibale)
+     * static private variable(module global variable)
     */
     var draggingPre = false, // 标识预拖放
     dragging = null, // 标识当前拖放的代理元素
@@ -11,9 +11,6 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
     obj = null, // 存储当前拖放的dnd
     dataTransfer = {};
     // 存储拖放信息,在dragstart可设置,在drop中可读取
-    /*
-     * constructor function
-    */
     Dnd = Base.extend({
         attrs: {
             element: {
@@ -102,7 +99,6 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
                 obj = dnd;
                 diffX = event.pageX - obj.get("element").offset().left;
                 diffY = event.pageY - obj.get("element").offset().top;
-                // draggingpre主要是防止用户点击而不是拖放
                 draggingPre = true;
                 // 阻止默认选中文本
                 event.preventDefault();
@@ -130,7 +126,6 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
 
           case "mouseup":
             if (dragging !== null) {
-                // 恢复光标
                 dragging.css("cursor", "default");
                 dragging.focus();
                 dragging = null;
@@ -152,11 +147,10 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
 
           case "keydown":
             if (dragging !== null && event.which === 27) {
-                // 恢复光标
                 dragging.css("cursor", "default");
                 dragging.focus();
                 dragging = null;
-                // 返回源节点
+                // 返回源节点初始位置
                 executeRevert(true);
                 // 此处传递的dragging为源节点element
                 obj.trigger("dragend", obj.get("element"), dropping);
@@ -267,7 +261,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
      * flag为true表示必须返回的,目前用于esc
     */
     function executeRevert(flag) {
-        var element = obj.get("element"), xdragging = obj.get("proxy"), drop = obj.get("drop"), revert = obj.get("revert"), revertDuration = obj.get("revertDuration"), visible = obj.get("visible"), xleft = 0, xtop = 0;
+        var element = obj.get("element"), xdragging = obj.get("proxy"), drop = obj.get("drop"), revert = obj.get("revert"), revertDuration = obj.get("revertDuration"), visible = obj.get("visible"), xleft = xdragging.offset().left - element.offset().left, xtop = xdragging.offset().top - element.offset().top;
         if (revert === true || flag === true || dropping === null && drop !== null) {
             //代理元素返回源节点初始位置
             element.attr("style", element.data("style"));
@@ -278,28 +272,33 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
                 left: element.offset().left,
                 top: element.offset().top
             }, revertDuration, function() {
-                // 显示源节点 移除代理元素
                 element.css("visibility", "");
                 xdragging.remove();
             });
         } else {
             // 源节点移动到代理元素处
-            xleft = xdragging.offset().left - element.offset().left;
-            xtop = xdragging.offset().top - element.offset().top;
             if (element.css("position") === "relative") {
-                element.css("left", (isNaN(parseInt(element.css("left"))) ? 0 : parseInt(element.css("left"))) + xleft);
-                element.css("top", (isNaN(parseInt(element.css("top"))) ? 0 : parseInt(element.css("top"))) + xtop);
+                xleft = (isNaN(parseInt(element.css("left"))) ? 0 : parseInt(element.css("left"))) + xleft;
+                xtop = (isNaN(parseInt(element.css("top"))) ? 0 : parseInt(element.css("top"))) + xtop;
             } else if (element.css("position") === "absolute") {
-                element.css("left", xdragging.offset().left);
-                element.css("top", xdragging.offset().top);
+                xleft = xdragging.offset().left;
+                xtop = xdragging.offset().top;
             } else {
                 element.css("position", "relative");
+            }
+            if (visible === false) {
                 element.css("left", xleft);
                 element.css("top", xtop);
+                element.css("visibility", "");
+                xdragging.remove();
+            } else {
+                element.animate({
+                    left: xleft,
+                    top: xtop
+                }, revertDuration, function() {
+                    xdragging.remove();
+                });
             }
-            // 显示源节点 移除代理元素
-            element.css("visibility", "");
-            xdragging.remove();
         }
     }
     /*
