@@ -115,6 +115,52 @@ data-dnd=true data-config为JSON字符串,  详细见演示
 >注: 这种方式不支持dataTransfer和一系列事件,  只是简单拖放
 
 
+## 最佳实践
+
+带有语义(拖拽数据)的拖拽
+```javascript
+seajs.use(['dnd', '$'], function(Dnd, $){
+
+    var proxy = document.createElement('img'),
+        dnd = null ;
+
+    $(proxy).on('load', function(){
+        dnd = new Dnd('#drag5', {drop: '#drop2', proxy: proxy, visible: true, 
+              revert: true}) ;
+
+        // dataTransfer为拖放数据，传输信息
+        dnd.on('dragstart', function(dataTransfer, dragging, dropping){
+            dataTransfer.data = '玉伯也叫射雕' ;
+        })
+        dnd.on('dragenter', function(dragging, dropping){
+            dropping.addClass('over') ;
+        })
+        dnd.on('dragleave', function(dragging, dropping){
+            dropping.removeClass('over') ;
+        })
+        dnd.on('drop', function(dataTransfer, dragging, dropping){
+            if(typeof(dataTransfer.data) !== 'undefined'){
+                dropping.text(dataTransfer.data) ;
+            }
+        })
+        dnd.on('dragend', function(dragging, dropping){
+            if(dropping) dropping.removeClass('over') ;
+        })
+    })
+    $(proxy).css('width', 50) ;
+    $(proxy).css('height', 50) ;
+    proxy.src = 'http://tp3.sinaimg.cn/1748374882/180/40020642911/1' ;
+});
+```
+
+用data-attr来实现的简单拖放
+```html
+<div id="drag6" class="drag" data-dnd=true 
+data-config='{"drop": "#drop3", "zIndex": 99}'></div>
+<br />
+<div id="drop3" class="container"></div>
+```
+
 
 
 
