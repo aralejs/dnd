@@ -67,7 +67,7 @@ define(function(require, exports, module){
             }
         },
         
-        // 开启页面Dnd功能,绑定鼠标,ecs事件
+        // 开启页面Dnd功能,绑定鼠标按下、移动、释放以及ecs按下事件
         open: function(){
             $(document).on('mousedown', handleEvent) ;
             $(document).on('mousemove', handleEvent) ;
@@ -75,7 +75,7 @@ define(function(require, exports, module){
             $(document).on('keydown', handleEvent) ;
         },
         
-        // 关闭页面Dnd功能,解绑鼠标,esc事件
+        // 关闭页面Dnd功能,解绑鼠标按下、移动、释放以及ecs按下事件
         close: function(){
             $(document).off('mousedown', handleEvent) ;
             $(document).off('mousemove', handleEvent) ;
@@ -87,7 +87,7 @@ define(function(require, exports, module){
     
     
     /*
-     * 核心部分,处理鼠标,esc事件,实现拖放逻辑
+     * 核心部分,处理鼠标按下、移动、释放以及ecs按下事件,实现拖放逻辑
     */
     function handleEvent(event){
         var dnd = null ;
