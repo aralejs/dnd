@@ -117,7 +117,7 @@ data-dnd=true data-config为JSON字符串,  详细见演示
 
 ## 最佳实践
 
-带有语义(拖拽数据)的拖拽
+带有语义(拖拽数据)的拖放
 ```javascript
 seajs.use(['dnd', '$'], function(Dnd, $){
 
