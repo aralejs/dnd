@@ -84,7 +84,8 @@ seajs.use(['dnd', '$'], function(Dnd, $){
         dnd = null ;
      
     $(proxy).on('load', function(){
-        dnd = new Dnd('#drag5', {drop: '#drop2', proxy: proxy, visible: true, revert: true}) ;
+        dnd = new Dnd('#drag5', {drop: '#drop2', proxy: proxy, visible: true, 
+              revert: true}) ;
         
         // dataTransfer为拖放数据，传输信息
         dnd.on('dragstart', function(dataTransfer, dragging, dropping){
