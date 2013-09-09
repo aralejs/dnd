@@ -35,7 +35,7 @@ define(function(require){
       
       
       // 测试构造
-      it('instance', function(done){
+      it('instance', function(){
           // 非法构造
           try{
               dnd = new Dnd() ;
@@ -46,10 +46,10 @@ define(function(require){
           // 一般构造
           dnd = new Dnd('#drag1') ;
           expect(dnd.get('element').get(0)).to.be($('#drag1').get(0)) ;
-          expect(dnd.get('containment')).to.be(null) ;
+          expect(dnd.get('containment').get(0)).to.be(document) ;
           expect(dnd.get('axis')).to.be(false) ;
           expect(dnd.get('visible')).to.be(false) ;
-          expect(dnd.get('proxy')).to.be(null) ;
+          expect(dnd.get('proxy').attr('id')).to.be('drag1') ;
           expect(dnd.get('drop')).to.be(null) ;
           expect(dnd.get('revert')).to.be(false) ;
           expect(dnd.get('revertDuration')).to.be(500) ;
@@ -57,54 +57,16 @@ define(function(require){
           expect(dnd.get('dragCursor')).to.be('move') ;
           expect(dnd.get('dropCursor')).to.be('copy') ;
           expect(dnd.get('zIndex')).to.be(9999) ;
-          
-          // 不合法配置mousedown后, 自动转化为默认配置
-          dnd = new Dnd('#drag1', {containment: '#drop1', proxy: '#drag1',
-                drop: '#drag1', axis: 0, visible: 0, revert: 0,      
-                revertDuration:'aaa', disabled:0, dragCursor:0, dropCursor:0, 
-                zIndex: 'aaa'}) ;
-          expect(dnd.get('containment')).to.be('#drop1') ;
-          expect(dnd.get('proxy')).to.be('#drag1') ;
-          expect(dnd.get('drop')).to.be('#drag1') ;
-          expect(dnd.get('axis')).to.be(0) ;
-          expect(dnd.get('visible')).to.be(0) ;
-          expect(dnd.get('revert')).to.be(0) ;
-          expect(dnd.get('revertDuration')).to.be('aaa') ;
-          expect(dnd.get('disabled')).to.be(0) ;
-          expect(dnd.get('dragCursor')).to.be(0) ;
-          expect(dnd.get('dropCursor')).to.be(0) ;
-          expect(dnd.get('zIndex')).to.be('aaa') ;
-          $('#drag1').on('mousedown', function(event, x, y){
-              event.which = 1 ;
-          }) ;
-          $('#drag1').trigger('mousedown') ;
-          $(document).trigger('mouseup') ;
-          setTimeout(function(){
-              expect(dnd.get('containment')).to.be(null) ;
-              expect(dnd.get('proxy').get(0) !==   
-                      $('#drag1').get(0)).to.be(true) ;
-              expect(dnd.get('drop')).to.be(null) ;
-              expect(dnd.get('axis')).to.be(false) ;
-              expect(dnd.get('visible')).to.be(false) ;
-              expect(dnd.get('revert')).to.be(false) ;
-              expect(dnd.get('revertDuration')).to.be(500) ;
-              expect(dnd.get('disabled')).to.be(false) ;
-              expect(dnd.get('dragCursor')).to.be('move') ;
-              expect(dnd.get('dropCursor')).to.be('copy') ;
-              expect(dnd.get('zIndex')).to.be(9999) ;
-              done() ;
-          }, 80) ;
       });
       
       
-      
+
       // 测试两阶段拖放
       it('drag', function(done){
           var originx = $('#drag1').offset().left ;
               originy = $('#drag1').offset().top ;
               lastx = 0,
               lastx = 0 ;
-          
           dnd = new Dnd('#drag1') ;
           $('#drag1').on('mousedown', function(event, x, y){
               event.which = 1 ;
@@ -117,14 +79,15 @@ define(function(require){
           }) ;
           
           $('#drag1').trigger('mousedown', [20, 20]) ;
-          $('#drag1').trigger('mousemove', [200, 300]) ;
+          $('#drag1').trigger('mousemove', [100, 150]) ;
           $(document).trigger('mouseup') ;
           $('#drag1').trigger('mousedown', [20, 20]) ;
-          $('#drag1').trigger('mousemove', [200, 300]) ;
+          $('#drag1').trigger('mousemove', [100, 150]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect(parseInt($('#drag1').offset().left)).to.be(originx + 400) ;
-              expect(parseInt($('#drag1').offset().top)).to.be(originy + 600) ;
+	      console.log(originx + ' ' + originy) ;
+              expect(parseInt($('#drag1').offset().left)).to.be(originx + 200) ;
+              expect(parseInt($('#drag1').offset().top)).to.be(originy + 300) ;
               done() ;
           }, 80) ;
       }) ;
@@ -149,7 +112,7 @@ define(function(require){
               lasty = event.pageY = lasty + y ;
           }) ;
           
-          dnd.close() ;
+          Dnd.close() ;
           $('#drag1').trigger('mousedown', [20, 20]) ;
           $('#drag1').trigger('mousemove', [200, 300]) ;
           $(document).trigger('mouseup') ;
@@ -158,7 +121,7 @@ define(function(require){
                       to.be(parseInt(originx)) ;
               expect($('#drag1').offset().top).
                       to.be(parseInt(originy)) ;
-              dnd.open() ;
+              Dnd.open() ;
               done() ;
           }, 80) ;
       }) ;
@@ -320,8 +283,8 @@ define(function(require){
                       to.be(parseInt(originy)) ;
               done() ;
           }, 1000) ;
-      }) ; 
+      }) ;
       
-  });
+  }); 
 
 });

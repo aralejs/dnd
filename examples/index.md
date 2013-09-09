@@ -5,7 +5,8 @@
 
 <style>
     .container {width:500px; height:200px; background:#CCC;}
-    .drag {width:50px; height:50px; background:#07B1EE;}
+    .drag {width:50px; height:50px; background:#07B1EE; position:relative;}
+    .smalldrag {width:20px; height:20px; background:#fff; margin:auto; position:absolute; left:0; top:0; right:0; bottom:0;}
     .over {border:2px dashed #000;}
 </style>
 
@@ -16,7 +17,9 @@
 
 ````html
 <div id="container1" class="container">
-    <div id="drag1" class="drag"></div>
+    <div id="drag1" class="drag">
+        <div class="smalldrag"></div>
+    </div>
 </div>
 ````
 
@@ -30,7 +33,9 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 ````html
 <div id="container2" class="container">
-    <div id="drag2" class="drag"></div>
+    <div id="drag2" class="drag">
+         <div class="smalldrag"></div>
+    </div>
 </div>
 ````
 
@@ -45,7 +50,9 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 ````html
 <div id="container3" class="container">
-    <div id="drag3" class="drag"></div>
+    <div id="drag3" class="drag">
+        <div class="smalldrag"></div>
+    </div>
 </div>
 ````
 
@@ -58,7 +65,9 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ## 4. 带有放置元素的拖放
 
 ````html
-<div id="drag4" class="drag"></div>
+<div id="drag4" class="drag">
+    <div class="smalldrag"></div>
+</div>
 <br />
 <div id="drop1" class="container"></div>
 ````
@@ -72,7 +81,9 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ## 5. 带有处理事件的拖放
 
 ````html
-<div id="drag5" class="drag"></div>
+<div id="drag5" class="drag">
+    <div class="smalldrag"></div>
+</div>
 <br />
 <div id="drop2" class="container"></div>
 ````
@@ -117,7 +128,9 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 ````html
 <div id="drag6" class="drag" data-dnd=true 
-data-config='{"drop": "#drop3", "zIndex": 99}'></div>
+data-config='{"drop": "#drop3", "zIndex": 99}'>
+    <div class="smalldrag"></div>
+</div>
 <br />
 <div id="drop3" class="container"></div>
 ````
