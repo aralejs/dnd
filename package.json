@@ -2,7 +2,6 @@
   "family": "arale",
   "name": "dnd",
   "version": "1.0.0",
-  "keywords": ["utility"],
   "description": "drag and drop",
   "homepage": "https://github.com/aralejs/dnd",
   "author": "叁儿 <317713370@qq.com>",
