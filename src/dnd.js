@@ -404,8 +404,9 @@ define(function(require, exports, module){
     
     /*
      * 根据revert判断是否要返回并执行
-     * 若drop不为null且dropping为null, 则自动回到原处
+     * 若drop(目标元素)不为null且dropping(当前目标元素)为null, 则自动回到原处
      * flag为true表示必须返回的,目前用于esc按下触发返回
+     * 处理完移除代理元素
     */
     function executeRevert(flag){
         var element = obj.get('element'),
@@ -453,6 +454,8 @@ define(function(require, exports, module){
 		element.css({left:xleft, top:xtop, visibility:''}) ;
                 xdragging.remove() ;
             } else{
+                
+                // 源节点显示时动画移动到代理元素处
                 element.animate({left: xleft, top: xtop}, revertDuration, 
                         function(){
                     xdragging.remove() ;
@@ -483,7 +486,7 @@ define(function(require, exports, module){
                     offset.top + $(A).outerHeight() >=
                     $(B).offset().top + $(B).outerHeight() ;
         } 
-	if(arguments.length ===3){  
+	if(arguments.length === 3){  
             return offset.left <= B &&
                     offset.left + $(A).outerWidth() >= B &&
                     offset.top <= C &&

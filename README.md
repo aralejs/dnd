@@ -11,36 +11,37 @@ Drap & Drop
 
 ### element    element[Array]|selector
 可拖放的元素, 即源节点
->注: 只取第一个元素, 非法时抛出异常, config的参数非法时将自动取默认值
+>注: 只取第一个元素, 非法时抛出异常
 
 ### containment    element[Array]|selector|null
-拖放的边界, 默认null为无边界 
->注: 只取第一个元素, element初始必须要位于containment的内部, 否则将默认为null
+拖放的边界, 默认为document
+>注: 只取第一个元素, element初始必须要位于containment的内部
 
 ### proxy    element[Array]|selector|null
 代理元素, 实际上跟随鼠标移动的元素, 默认null为源节点element的clone
 >注: 只取第一个元素
 
 ### drop    element[Array]|selector|null
-放置元素, 默认null为无
+目标元素, 默认null为无
 >注: 可以有多个元素
 
-### axis   'x'|'y'|false
-拖放指定的方向, 默认false为任意方向
+### disabled    boolean
+是否禁止该元素拖放, 默认false为不禁止
 
 ### visible    boolean
 被拖放的元素在源位置上是否可见, 默认false为不可见
 
+### axis   'x'|'y'|false
+拖放指定的方向, 默认false为任意方向
+
 ### revert    boolean
 是否返回源节点初始位置, 默认false为不返回
->注: 当drop不为null并且没有在drop元素上释放鼠标 或者 按下esc取消, 将返回源节点初始位置, 与revert无关
+>注: 当目标元素不为null并且当前目标元素为null时释放鼠标 或者 按下esc,
+ 将返回源节点初始位置
 
 ### revertDuration    number
 返回速度, 默认为500
 >注: 源节点显示(visible = true)时, 拖放结束时移动到拖放位置的速度也取此值
-
-### disabled    boolean
-是否禁止该元素拖放, 默认false为不禁止
 
 ### dragCursor    string
 拖放过程中没进入放置元素drop时光标形状, 默认为"move"
@@ -56,7 +57,7 @@ Drap & Drop
 
 ### Dnd(element,  config)
 构造函数,  element不能为空
->注: element为空会抛出异常,  config应为纯粹对象
+>注: element为空会抛出异常,  config应为简单对象
 
 ### set(option,  value)
 设置配置属性,  element不能设置
@@ -64,14 +65,14 @@ Drap & Drop
 
 ### get(option)
 获取配置属性
->注: 配置属性为DOM元素的, 经过拖放后均返回其jquery对象,  proxy将返回源节点clone元素的jquery对象(proxy设置为null时)
+>注: 配置属性为DOM元素的, 均返回其jquery对象,  proxy将返回源节点clone元素的jquery对象(proxy设置为null时)
 
 ### open()
-开启页面的拖放功能
+静态方法,用Dnd直接调用,开启页面的拖放功能
 >注: 默认use dnd组件就自动open了
 
 ### close()
-关闭页面的拖放功能
+静态方法,用Dnd直接调用,关闭页面的拖放功能
 
 
 ## 事件
