@@ -244,9 +244,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
      * 根据边界和方向一起判断是否drag并执行
     */
     function executeDrag(event) {
-        var containment = obj.get("containment"), axis = obj.get("axis"), xleft = event.pageX - diffX, xtop = event.pageY - diffY, originx = dragging.data("originx");
-        originy = dragging.data("originy");
-        offset = containment.offset();
+        var containment = obj.get("containment"), axis = obj.get("axis"), xleft = event.pageX - diffX, xtop = event.pageY - diffY, originx = dragging.data("originx"), originy = dragging.data("originy"), offset = containment.offset();
         // containment is document
         if (offset === null) {
             offset = {
@@ -313,8 +311,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
      * 当dragging不在dropping内且不需要revert时, 将dragging置于dropping中央
     */
     function executeDrop() {
-        var element = obj.get("element"), xdragging = obj.get("proxy"), revert = obj.get("revert"), originx = xdragging.data("originx");
-        originy - xdragging.data("originy");
+        var element = obj.get("element"), xdragging = obj.get("proxy"), revert = obj.get("revert"), originx = xdragging.data("originx"), originy = xdragging.data("originy");
         if (dropping !== null) {
             // 放置时不完全在drop中并且不需要返回的则放置中央
             if (isContain(dropping, xdragging) === false && revert === false) {
@@ -327,12 +324,12 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
     }
     /*
      * 根据revert判断是否要返回并执行
-     * 若drop不为null且dropping为null, 则自动回到原处
+     * 若drop(目标元素)不为null且dropping(当前目标元素)为null, 则自动回到原处
      * flag为true表示必须返回的,目前用于esc按下触发返回
+     * 处理完移除代理元素
     */
     function executeRevert(flag) {
-        var element = obj.get("element"), xdragging = obj.get("proxy"), drop = obj.get("drop"), revert = obj.get("revert"), revertDuration = obj.get("revertDuration"), visible = obj.get("visible"), xleft = xdragging.offset().left - element.offset().left, xtop = xdragging.offset().top - element.offset().top, originx = xdragging.data("originx");
-        originy - xdragging.data("originy");
+        var element = obj.get("element"), xdragging = obj.get("proxy"), drop = obj.get("drop"), revert = obj.get("revert"), revertDuration = obj.get("revertDuration"), visible = obj.get("visible"), xleft = xdragging.offset().left - element.offset().left, xtop = xdragging.offset().top - element.offset().top, originx = xdragging.data("originx"), originy = xdragging.data("originy");
         if (revert === true || flag === true || dropping === null && drop !== null) {
             //代理元素返回源节点初始位置
             element.attr("style", element.data("style"));
@@ -365,6 +362,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
                 });
                 xdragging.remove();
             } else {
+                // 源节点显示时动画移动到代理元素处
                 element.animate({
                     left: xleft,
                     top: xtop
