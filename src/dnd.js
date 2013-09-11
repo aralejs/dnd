@@ -21,46 +21,46 @@ define(function(require, exports, module){
             element: {
                 value: null,
                 readOnly: true,
-		getter: function(val){
-		    return $(val).eq(0) ;
-		}
+                getter: function(val){
+                    return $(val).eq(0) ;
+                }
             },
             containment: {
-	        value: document,
-		getter: function(val){
-		    return $(val).eq(0) ;
-		}
-	    },
-	    proxy: {
+                value: document,
+                getter: function(val){
+                    return $(val).eq(0) ;
+                }
+            },
+            proxy: {
                 value: null,
-		getter: function(val){
-		    if(val === null){
-		        return null ;
-		    } else{
-			return $(val).eq(0) ;
-		    }
-		},
+                getter: function(val){
+                    if(val === null){
+                        return null ;
+                    } else{
+                        return $(val).eq(0) ;
+                    }
+                },
                 setter: function(val){
-		    if(val === null){
-			return this.get('element').clone() ;
-		    } else{
-			return val ;
-		    }
-		}
-	    },
-	    drop: {
-	        value: null,
-		getter: function(val){
-		    if(val === null){
-			return null ;
-		    } else{
-			return $(val).eq(0) ;
-		    }
-		}
-	    },
-	    disabled: false,
+                    if(val === null){
+                        return this.get('element').clone() ;
+                    } else{
+                        return val ;
+                    }
+                }  
+            },
+            drop: {
+                value: null,
+                getter: function(val){
+                    if(val === null){
+                        return null ;
+                    } else{
+                        return $(val).eq(0) ;
+                    }   
+                }  
+            },
+            disabled: false,
             visible: false,
-	    axis: false,
+            axis: false,
             revert: false,
             revertDuration: 500,
             dragCursor: 'move',
@@ -71,29 +71,23 @@ define(function(require, exports, module){
         initialize: function(elem, config){
             var element = null ;
             
-	    // 检查源节点合法性，初始化
+            // 检查源节点合法性，初始化
             if($(elem).length === 0 || $(elem).get(0).nodeType !== 1){
-		$.error('element error!') ;
-	    }
+                $.error('element error!') ;
+            }
             config = $.extend({element: elem}, config) ;
             Dnd.superclass.initialize.call(this, config) ;
             element = this.get('element') ;
-	    if(this.get('proxy') === null){
-		this.set('proxy', element.clone()) ;
-	    }
-            
-            // 记录下源节点初始style
-            if(element.data('style') === undefined){
-                if(element.attr('style') === undefined){
-                    element.data('style', '') ;
-                } else{
-                    element.data('style', element.attr('style')) ;
-                }
+            if(this.get('proxy') === null){
+                this.set('proxy', element.clone()) ;
             }
             
+            // 记录下源节点初始style
+            element.data('style', element.attr('style') || '') ;
+
             // 在源节点上存储dnd uid
             element.data('dnd', ++uid) ;
-	    dndArray[uid] = this ;
+            dndArray[uid] = this ;
         }   
     }) ;
     
@@ -103,8 +97,8 @@ define(function(require, exports, module){
      * 开启页面Dnd功能,绑定鼠标按下、移动、释放以及ecs按下事件
     */
     Dnd.open = function(){
-	$(document).on('mousedown mousemove mouseup keydown',
-		handleEvent) ;
+        $(document).on('mousedown mousemove mouseup keydown',
+                handleEvent) ;
     } ;
    
 
@@ -113,8 +107,8 @@ define(function(require, exports, module){
      * 关闭页面Dnd功能,解绑鼠标按下、移动、释放以及ecs按下事件
     */
     Dnd.close = function(){
-	$(document).off('mousedown mousemove mouseup keydown',
-		handleEvent) ;
+        $(document).off('mousedown mousemove mouseup keydown',
+                handleEvent) ;
     } ;
  
 
@@ -126,15 +120,15 @@ define(function(require, exports, module){
         switch(event.type){
             case 'mousedown':
                 if(event.which === 1){
-                    
-		    // 检测并执行预拖放
-		    executeDragPre({target: event.target, pageX: event.pageX, 
-			    pageY:event.pageY}) ;
+
+                    // 检测并执行预拖放
+                    executeDragPre({target: event.target, pageX: event.pageX,
+                            pageY:event.pageY}) ;
 
                     // 阻止默认选中文本
-		    if(draggingPre === true){
+                    if(draggingPre === true){
                         event.preventDefault() ;
-		    }
+                    }
                 }
                 break ;
             
@@ -207,39 +201,38 @@ define(function(require, exports, module){
      * 鼠标按下触发预拖放
     */
     function executeDragPre(event){
-	var element = null,
-	    proxy = null,
-	    dnd = null,
-	    targetArray = $(event.target).parents().toArray() ;
-
-	// 查找自身和父元素，判断是否为可拖放元素
+        var element = null,
+            proxy = null,
+            dnd = null,
+            targetArray = $(event.target).parents().toArray() ;
+        
+        // 查找自身和父元素，判断是否为可拖放元素
         targetArray.unshift(event.target) ;
         $.each(targetArray, function(index, elem){
-	    if($(elem).data('dnd') !== undefined){
-	        dnd = $(elem).data('dnd') ;
-	        if(dnd === true){
-	            dnd = new Dnd(elem, $(elem).data('config')) ;
-	        } else if(isNaN(parseInt(dnd)) === false && 
-	                parseInt(dnd) > 0){
-	            dnd = dndArray[parseInt(dnd)] ;
-	        } else{
-		    return true ;
-	        }
-	        return false ;
-	    }
-	}) ;
+            if($(elem).data('dnd') !== undefined){
+                dnd = $(elem).data('dnd') ;
+                if(dnd === true){
+                    dnd = new Dnd(elem, $(elem).data('config')) ;
+                } else if(isNaN(parseInt(dnd)) === false && parseInt(dnd) > 0){
+                    dnd = dndArray[parseInt(dnd)] ;
+                } else{
+                    return true ;
+                }
+                return false ;
+            }
+        }) ;
                 
-       	// 不允许拖放则返回
+        // 不允许拖放则返回
         if(dnd === null || dnd.get('disabled') === true) return ;
 
-	// 将dnd对象传给当前拖放对象obj
+        // 将dnd对象传给当前拖放对象obj
         obj = dnd ;
-	element = obj.get('element') ;
-	proxy = obj.get('proxy') ;
-       
-	// 设置代理元素proxy，并将其插入文档中
+        element = obj.get('element') ;
+        proxy = obj.get('proxy') ;
+        
+        // 设置代理元素proxy，并将其插入文档中
         proxy.css({position:'absolute', margin:0, left:0, top:0, 
-		visibility:'hidden'}) ;
+        visibility:'hidden'}) ;
         proxy.appendTo(element.parent()) ;
         proxy.data('originx', proxy.offset().left) ;
         proxy.data('originy', proxy.offset().top) ;
@@ -266,7 +259,7 @@ define(function(require, exports, module){
         if(visible !== true){
             element.css('visibility', 'hidden') ;
         }
-	proxy.css({'z-index':zIndex, visibility:'visible', cursor:dragCursor}) ;
+        proxy.css({'z-index':zIndex, visibility:'visible', cursor:dragCursor}) ;
         proxy.focus() ;
         
         dataTransfer = {} ;
@@ -285,14 +278,14 @@ define(function(require, exports, module){
             axis = obj.get('axis'),
             xleft = event.pageX - diffX,
             xtop = event.pageY - diffY,
-	    originx = dragging.data('originx'),
-	    originy = dragging.data('originy'),
-	    offset = containment.offset() ;
+            originx = dragging.data('originx'),
+            originy = dragging.data('originy'),
+            offset = containment.offset() ;
         
-	// containment is document
-	if(offset === null){
-	    offset = {left:0, top:0} ;
-	}
+        // containment is document
+        if(offset === null){
+            offset = {left:0, top:0} ;
+        }
         
         // 是否在x方向上移动并执行
         if(axis !== 'y'){
@@ -304,7 +297,7 @@ define(function(require, exports, module){
                 if(xleft <= offset.left){
                     dragging.css('left', offset.left - originx) ;
                 } else{
-                    dragging.css('left', 
+                    dragging.css('left',
                             offset.left + containment.outerWidth() -  
                             dragging.outerWidth() - originx) ;
                 }
@@ -321,7 +314,7 @@ define(function(require, exports, module){
                 if(xtop <= offset.top){
                     dragging.css('top', offset.top - originy) ;
                 } else{
-                    dragging.css('top', 
+                    dragging.css('top',
                             offset.top + containment.outerHeight() -  
                             dragging.outerHeight() - originy) ;
                 }
@@ -344,28 +337,30 @@ define(function(require, exports, module){
             xleft = dragging.offset().left + diffX,
             xtop = dragging.offset().top + diffY ;
         
-        if(drop !== null){                    
-            if(dropping === null){
-                $.each(drop, function(index, elem){
-                    if(isContain(elem, xleft, xtop) === true){
-                        dragging.css('cursor', dropCursor) ;
-                        dragging.focus() ;
-                        
-                        dropping = $(elem) ;
-                        obj.trigger('dragenter', dragging, dropping) ;
-                        return false ; // 跳出each
-                    }
-                }) ;
-            } else{
-                if(isContain(dropping, xleft, xtop) === false){
-                    dragging.css('cursor', dragCursor) ;
+        if(drop === null){
+            return ;
+        }
+
+        if(dropping === null){
+            $.each(drop, function(index, elem){
+                if(isContain(elem, xleft, xtop) === true){
+                    dragging.css('cursor', dropCursor) ;
                     dragging.focus() ;
-                    
-                    obj.trigger('dragleave', dragging, dropping) ;
-                    dropping = null ;
-                } else{
-                    obj.trigger('dragover', dragging, dropping) ;
+                        
+                    dropping = $(elem) ;
+                    obj.trigger('dragenter', dragging, dropping) ;
+                    return false ; // 跳出each
                 }
+            }) ;
+        } else{
+            if(isContain(dropping, xleft, xtop) === false){
+                dragging.css('cursor', dragCursor) ;
+                dragging.focus() ;
+                    
+                obj.trigger('dragleave', dragging, dropping) ;
+                dropping = null ;
+            } else{
+                obj.trigger('dragover', dragging, dropping) ;
             }
         }
     }
@@ -380,24 +375,25 @@ define(function(require, exports, module){
         var element = obj.get('element'),
             xdragging = obj.get('proxy'),
             revert = obj.get('revert'),
-	    originx = xdragging.data('originx'),
-	    originy = xdragging.data('originy') ;	    
+            originx = xdragging.data('originx'),
+            originy = xdragging.data('originy') ;       
         
-        if(dropping !== null){
-            
-            // 放置时不完全在drop中并且不需要返回的则放置中央
-            if(isContain(dropping, xdragging) === false && revert === false){
-                xdragging.css('left', dropping.offset().left +
-                        (dropping.outerWidth() -
-                        xdragging.outerWidth()) / 2 - originx) ;
-                xdragging.css('top', dropping.offset().top +
-                        (dropping.outerHeight() -
-                        xdragging.outerHeight()) / 2 - originy) ;
-            }
-            
-            // 此处传递的dragging为源节点element
-            obj.trigger('drop', dataTransfer, element, dropping) ;
+        if(dropping === null){
+            return ;
         }
+            
+        // 放置时不完全在drop中并且不需要返回的则放置中央
+        if(isContain(dropping, xdragging) === false && revert === false){
+            xdragging.css('left', dropping.offset().left +
+                    (dropping.outerWidth() -
+                    xdragging.outerWidth()) / 2 - originx) ;
+            xdragging.css('top', dropping.offset().top +
+                    (dropping.outerHeight() -
+                    xdragging.outerHeight()) / 2 - originy) ;
+        }
+        
+        // 此处传递的dragging为源节点element
+        obj.trigger('drop', dataTransfer, element, dropping) ;
     }
     
     
@@ -417,8 +413,8 @@ define(function(require, exports, module){
             visible = obj.get('visible'),
             xleft = xdragging.offset().left - element.offset().left,
             xtop = xdragging.offset().top -  element.offset().top,
-	    originx = xdragging.data('originx'),
-	    originy = xdragging.data('originy') ;
+            originx = xdragging.data('originx'),
+            originy = xdragging.data('originy') ;
             
         if(revert === true || flag === true ||
                 (dropping === null && drop !== null)){
@@ -431,7 +427,7 @@ define(function(require, exports, module){
             
             xdragging.animate({left: element.offset().left - originx,
                     top: element.offset().top - originy},
-		    revertDuration, function(){
+            revertDuration, function(){
                 element.css('visibility', '') ;
                 xdragging.remove() ;
             }) ;
@@ -451,7 +447,7 @@ define(function(require, exports, module){
             }
             
             if(visible === false){
-		element.css({left:xleft, top:xtop, visibility:''}) ;
+                element.css({left:xleft, top:xtop, visibility:''}) ;
                 xdragging.remove() ;
             } else{
                 
@@ -473,10 +469,10 @@ define(function(require, exports, module){
     function isContain(A, B, C){
         var offset = $(A).offset() ;
         
-	// A is document
-	if(offset === null){
-	    offset = {left:0, top:0} ;
-	}
+        // A is document
+        if(offset === null){
+            offset = {left:0, top:0} ;
+        }
        
         if(arguments.length === 2){
             return offset.left <= $(B).offset().left &&
@@ -486,7 +482,7 @@ define(function(require, exports, module){
                     offset.top + $(A).outerHeight() >=
                     $(B).offset().top + $(B).outerHeight() ;
         } 
-	if(arguments.length === 3){  
+        if(arguments.length === 3){  
             return offset.left <= B &&
                     offset.left + $(A).outerWidth() >= B &&
                     offset.top <= C &&
