@@ -85,7 +85,6 @@ define(function(require){
           $('#drag1').trigger('mousemove', [100, 150]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-	      console.log(originx + ' ' + originy) ;
               expect(parseInt($('#drag1').offset().left)).to.be(originx + 200) ;
               expect(parseInt($('#drag1').offset().top)).to.be(originy + 300) ;
               done() ;
