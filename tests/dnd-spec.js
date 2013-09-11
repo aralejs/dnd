@@ -8,10 +8,16 @@ define(function(require){
   describe('Dnd', function(){
       var template = '<style>' + 
                      '.container{width:500px; height:200px;background:#CCC;}' +
-                     '.drag{width:50px; height:50px;background:#07B1EE;}' +
+                     '.drag {width:50px; height:50px; background:#07B1EE; ' +
+		     'position:relative;}' + 
+		     '.smalldrag {width:20px; height:20px; background:#fff; ' +
+		     'margin:auto; position:absolute; left:0; top:0; right:0;' +
+		     'bottom:0;}' +
                      '</style>' +
                      '<div id="wrap"><div id="container1" class="container">' +
-                     '<div id="drag1" class="drag"></div></div><br/>' +
+                     '<div id="drag1" class="drag">' +
+		     '<div class="smalldrag"></div>' +
+		     '</div></div><br/>' +
                      '<div id="drop1" class="container"></div></div>', 
           element = null,
           dnd = null ;
@@ -70,10 +76,12 @@ define(function(require){
           dnd = new Dnd('#drag1') ;
           $('#drag1').on('mousedown', function(event, x, y){
               event.which = 1 ;
+	      event.target = $('.smalldrag').get(0) ;
               lastx = event.pageX = originx + x;
               lasty = event.pageY = originy + y ;
           }) ;
           $('#drag1').on('mousemove', function(event, x, y){
+	      event.target = $('.smalldrag').get(0) ;
               lastx = event.pageX = lastx + x ;
               lasty = event.pageY = lasty + y ;
           }) ;
