@@ -76,13 +76,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
                 this.set("proxy", element.clone());
             }
             // 记录下源节点初始style
-            if (element.data("style") === undefined) {
-                if (element.attr("style") === undefined) {
-                    element.data("style", "");
-                } else {
-                    element.data("style", element.attr("style"));
-                }
-            }
+            element.data("style", element.attr("style") || "");
             // 在源节点上存储dnd uid
             element.data("dnd", ++uid);
             dndArray[uid] = this;
@@ -283,26 +277,27 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
     */
     function executeDragEnterLeaveOver() {
         var element = obj.get("element"), drop = obj.get("drop"), dragCursor = obj.get("dragCursor"), dropCursor = obj.get("dropCursor"), xleft = dragging.offset().left + diffX, xtop = dragging.offset().top + diffY;
-        if (drop !== null) {
-            if (dropping === null) {
-                $.each(drop, function(index, elem) {
-                    if (isContain(elem, xleft, xtop) === true) {
-                        dragging.css("cursor", dropCursor);
-                        dragging.focus();
-                        dropping = $(elem);
-                        obj.trigger("dragenter", dragging, dropping);
-                        return false;
-                    }
-                });
-            } else {
-                if (isContain(dropping, xleft, xtop) === false) {
-                    dragging.css("cursor", dragCursor);
+        if (drop === null) {
+            return;
+        }
+        if (dropping === null) {
+            $.each(drop, function(index, elem) {
+                if (isContain(elem, xleft, xtop) === true) {
+                    dragging.css("cursor", dropCursor);
                     dragging.focus();
-                    obj.trigger("dragleave", dragging, dropping);
-                    dropping = null;
-                } else {
-                    obj.trigger("dragover", dragging, dropping);
+                    dropping = $(elem);
+                    obj.trigger("dragenter", dragging, dropping);
+                    return false;
                 }
+            });
+        } else {
+            if (isContain(dropping, xleft, xtop) === false) {
+                dragging.css("cursor", dragCursor);
+                dragging.focus();
+                obj.trigger("dragleave", dragging, dropping);
+                dropping = null;
+            } else {
+                obj.trigger("dragover", dragging, dropping);
             }
         }
     }
@@ -312,15 +307,16 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
     */
     function executeDrop() {
         var element = obj.get("element"), xdragging = obj.get("proxy"), revert = obj.get("revert"), originx = xdragging.data("originx"), originy = xdragging.data("originy");
-        if (dropping !== null) {
-            // 放置时不完全在drop中并且不需要返回的则放置中央
-            if (isContain(dropping, xdragging) === false && revert === false) {
-                xdragging.css("left", dropping.offset().left + (dropping.outerWidth() - xdragging.outerWidth()) / 2 - originx);
-                xdragging.css("top", dropping.offset().top + (dropping.outerHeight() - xdragging.outerHeight()) / 2 - originy);
-            }
-            // 此处传递的dragging为源节点element
-            obj.trigger("drop", dataTransfer, element, dropping);
+        if (dropping === null) {
+            return;
         }
+        // 放置时不完全在drop中并且不需要返回的则放置中央
+        if (isContain(dropping, xdragging) === false && revert === false) {
+            xdragging.css("left", dropping.offset().left + (dropping.outerWidth() - xdragging.outerWidth()) / 2 - originx);
+            xdragging.css("top", dropping.offset().top + (dropping.outerHeight() - xdragging.outerHeight()) / 2 - originy);
+        }
+        // 此处传递的dragging为源节点element
+        obj.trigger("drop", dataTransfer, element, dropping);
     }
     /*
      * 根据revert判断是否要返回并执行
