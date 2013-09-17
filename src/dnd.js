@@ -213,6 +213,9 @@ define(function(require, exports, module){
                 dnd = $(elem).data('dnd') ;
                 if(dnd === true){
                     dnd = new Dnd(elem, $(elem).data('config')) ;
+                } else if(dnd === false){
+                    // dnd为false标识禁止该元素触发拖放
+                    dnd = null ;
                 } else if(isNaN(parseInt(dnd)) === false && parseInt(dnd) > 0){
                     dnd = dndArray[parseInt(dnd)] ;
                 } else{
@@ -237,7 +240,8 @@ define(function(require, exports, module){
         proxy.data('originx', proxy.offset().left) ;
         proxy.data('originy', proxy.offset().top) ;
         proxy.css({left: element.offset().left - proxy.data('originx'),
-                top: element.offset().top - proxy.data('originy')}) ;
+                top: element.offset().top - proxy.data('originy'),
+                width: element.css('width')}) ;
         diffX = event.pageX - element.offset().left ;
         diffY = event.pageY - element.offset().top ;
         draggingPre = true ;

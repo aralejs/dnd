@@ -2,7 +2,7 @@
 
 ---
 
-
+<link href="http://assets.spmjs.org/alice/box/1.1.0/box.css" rel="stylesheet">
 <style>
     .container {width:500px; height:200px; background:#CCC;}
     .drag {width:50px; height:50px; background:#07B1EE; position:relative;}
@@ -146,13 +146,21 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 
+##7. 和alice-box配合使用
 
+````html
+<div class="ui-box" data-dnd=true>
+    <div class="ui-box-head">
+        <h3 class="ui-box-head-title">区块标题</h3>
+        <span class="ui-box-head-text">其他文字</span>
+        <a href="#" class="ui-box-head-more">更多</a>
+    </div>
+    <div class="ui-box-container" data-dnd=false>
+        <div class="ui-box-content">ui-box-content 有默认内边距</div>
+    </div>
+</div>
+````
 
-
-
-
-
-
-
-
-
+````javascript
+seajs.use(['dnd', '$']) ;
+````
