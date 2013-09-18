@@ -214,6 +214,7 @@ define(function(require, exports, module){
                 if(dnd === true){
                     dnd = new Dnd(elem, $(elem).data('config')) ;
                 } else if(dnd === false){
+
                     // dnd为false标识禁止该元素触发拖放
                     dnd = null ;
                 } else if(isNaN(parseInt(dnd)) === false && parseInt(dnd) > 0){
