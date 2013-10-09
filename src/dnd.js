@@ -54,7 +54,7 @@ define(function(require, exports, module){
                     if(val === null){
                         return null ;
                     } else{
-                        return $(val).eq(0) ;
+                        return $(val) ;
                     }   
                 }  
             },

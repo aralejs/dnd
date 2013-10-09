@@ -48,7 +48,7 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
                     if (val === null) {
                         return null;
                     } else {
-                        return $(val).eq(0);
+                        return $(val);
                     }
                 }
             },
