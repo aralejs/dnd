@@ -93,8 +93,8 @@ define(function(require){
           $('#drag1').trigger('mousemove', [100, 150]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect(parseInt($('#drag1').offset().left)).to.be(originx + 200) ;
-              expect(parseInt($('#drag1').offset().top)).to.be(originy + 300) ;
+              expect(parseInt($('#drag1').offset().left, 10)).to.be(originx + 200) ;
+              expect(parseInt($('#drag1').offset().top, 10)).to.be(originy + 300) ;
               done() ;
           }, 80) ;
       }) ;
@@ -125,9 +125,9 @@ define(function(require){
           $(document).trigger('mouseup') ;
           setTimeout(function(){
               expect($('#drag1').offset().left).
-                      to.be(parseInt(originx)) ;
+                      to.be(parseInt(originx, 10)) ;
               expect($('#drag1').offset().top).
-                      to.be(parseInt(originy)) ;
+                      to.be(parseInt(originy, 10)) ;
               Dnd.open() ;
               done() ;
           }, 80) ;
@@ -190,14 +190,14 @@ define(function(require){
           $('#drag1').trigger('mousemove', [200, 220]) ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect(parseInt($('#drag1').offset().left)).to.
+              expect(parseInt($('#drag1').offset().left, 10)).to.
                       be(parseInt($('#drop1').offset().left + 
                       ($('#drop1').outerWidth() - 
-                      $('#drag1').outerWidth()) / 2)) ;
-              expect(parseInt($('#drag1').offset().top)).to.
+                      $('#drag1').outerWidth()) / 2, 10)) ;
+              expect(parseInt($('#drag1').offset().top, 10)).to.
                       be(parseInt($('#drop1').offset().top + 
                       ($('#drop1').outerHeight() - 
-                      $('#drag1').outerHeight()) / 2)) ;
+                      $('#drag1').outerHeight()) / 2, 10)) ;
               done() ;
           }, 80) ;
       }) ;
@@ -284,10 +284,10 @@ define(function(require){
           $('#drag1').trigger('keydown') ;
           $(document).trigger('mouseup') ;
           setTimeout(function(){
-              expect(parseInt($('#drag1').offset().left)).
-                      to.be(parseInt(originx)) ;
-              expect(parseInt($('#drag1').offset().top)).
-                      to.be(parseInt(originy)) ;
+              expect(parseInt($('#drag1').offset().left, 10)).
+                      to.be(parseInt(originx, 10)) ;
+              expect(parseInt($('#drag1').offset().top, 10)).
+                      to.be(parseInt(originy, 10)) ;
               done() ;
           }, 1000) ;
       }) ;

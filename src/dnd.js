@@ -208,8 +208,8 @@ define(function(require, exports, module){
 
                     // dnd为false标识禁止该元素触发拖放
                     dnd = null ;
-                } else if(isNaN(parseInt(dnd)) === false && parseInt(dnd) > 0){
-                    dnd = dndArray[parseInt(dnd)] ;
+                } else if(isNaN(parseInt(dnd, 10)) === false && parseInt(dnd, 10) > 0){
+                    dnd = dndArray[parseInt(dnd, 10)] ;
                 } else{
                     return true ;
                 }
@@ -432,10 +432,10 @@ define(function(require, exports, module){
             
             // 源节点移动到代理元素处
             if(element.css('position') === 'relative'){
-                xleft = (isNaN(parseInt(element.css('left'))) ? 0 : 
-                        parseInt(element.css('left'))) + xleft ;
-                xtop = (isNaN(parseInt(element.css('top'))) ? 0 : 
-                        parseInt(element.css('top'))) + xtop ;
+                xleft = (isNaN(parseInt(element.css('left'), 10)) ? 0 : 
+                        parseInt(element.css('left'), 10)) + xleft ;
+                xtop = (isNaN(parseInt(element.css('top'), 10)) ? 0 : 
+                        parseInt(element.css('top'), 10)) + xtop ;
             } else if(element.css('position') === 'absolute'){
                 xleft = xdragging.offset().left ;
                 xtop = xdragging.offset().top ;
