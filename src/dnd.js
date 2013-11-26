@@ -20,42 +20,28 @@ define(function(require, exports, module){
         attrs: {
             element: {
                 value: null,
-                readOnly: true,
-                getter: function(val){
-                    return $(val).eq(0) ;
-                }
+                readOnly: true
             },
             containment: {
-                value: document,
-                getter: function(val){
+                value: $(document),
+                setter: function(val){
                     return $(val).eq(0) ;
                 }
             },
             proxy: {
                 value: null,
-                getter: function(val){
-                    if(val === null){
-                        return null ;
-                    } else{
-                        return $(val).eq(0) ;
-                    }
-                },
                 setter: function(val){
                     if(val === null){
                         return this.get('element').clone() ;
                     } else{
-                        return val ;
+                        return $(val).eq(0) ;
                     }
                 }  
             },
             drop: {
                 value: null,
-                getter: function(val){
-                    if(val === null){
-                        return null ;
-                    } else{
-                        return $(val) ;
-                    }   
+                setter: function(val){
+                    return $(val) ;
                 }  
             },
             disabled: false,
@@ -70,13 +56,18 @@ define(function(require, exports, module){
         
         initialize: function(elem, config){
             var element = null ;
+            var $elem = $(elem);
             
             // 检查源节点合法性，初始化
-            if($(elem).length === 0 || $(elem).get(0).nodeType !== 1){
+            if($elem.length === 0 || $elem.get(0).nodeType !== 1){
                 $.error('element error!') ;
             }
-            config = $.extend({element: elem}, config) ;
+
+            // 反正 element 只能通过config传递，就不要用 getter，加强性能
+            config = $.extend({element: $elem.eq(0)}, config) ;
+
             Dnd.superclass.initialize.call(this, config) ;
+
             element = this.get('element') ;
             if(this.get('proxy') === null){
                 this.set('proxy', element.clone()) ;
@@ -288,7 +279,8 @@ define(function(require, exports, module){
             offset = containment.offset() ;
         
         // containment is document
-        if(offset === null){
+        // 不用 === 是因为 jquery 版本不同，返回值也不同
+        if(!offset){
             offset = {left:0, top:0} ;
         }
         

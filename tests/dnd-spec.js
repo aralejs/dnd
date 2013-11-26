@@ -69,10 +69,10 @@ define(function(require){
 
       // 测试两阶段拖放
       it('drag', function(done){
-          var originx = $('#drag1').offset().left ;
-              originy = $('#drag1').offset().top ;
+          var originx = $('#drag1').offset().left ,
+              originy = $('#drag1').offset().top ,
               lastx = 0,
-              lastx = 0 ;
+              lasty = 0 ;
           dnd = new Dnd('#drag1') ;
           $('#drag1').on('mousedown', function(event, x, y){
               event.which = 1 ;
@@ -103,8 +103,8 @@ define(function(require){
       
       // 测试关闭页面拖放
       it('close', function(done){
-          var originx = $('#drag1').offset().left ;
-              originy = $('#drag1').offset().top ;
+          var originx = $('#drag1').offset().left ,
+              originy = $('#drag1').offset().top ,
               lastx = 0,
               lasty = 0 ;
           
@@ -137,8 +137,8 @@ define(function(require){
       
       // 测试边界和方向约束
       it('containment & axis', function(done){
-          var originx = $('#drag1').offset().left ;
-              originy = $('#drag1').offset().top ;
+          var originx = $('#drag1').offset().left ,
+              originy = $('#drag1').offset().top ,
               lastx = 0,
               lasty = 0 ;
           
@@ -170,8 +170,8 @@ define(function(require){
       
       // 测试drop, 并且没完全置于drop元素中时，将自动将源节点置于drop中央
       it('drop in the center', function(done){
-          var originx = $('#drag1').offset().left ;
-              originy = $('#drag1').offset().top ;
+          var originx = $('#drag1').offset().left ,
+              originy = $('#drag1').offset().top ,
               lastx = 0,
               lasty = 0 ;
           
@@ -206,8 +206,8 @@ define(function(require){
       
       // 测试整个系列事件触发情况以及dataTransfer传输状况
       it('events & dataTransfer', function(done){
-          var originx = $('#drag1').offset().left ;
-              originy = $('#drag1').offset().top ;
+          var originx = $('#drag1').offset().left ,
+              originy = $('#drag1').offset().top ,
               lastx = 0,
               lasty = 0 ;
           
@@ -260,8 +260,8 @@ define(function(require){
      
       // 测试esc将返回源节点初始位置
       it('esc revert', function(done){
-          var originx = $('#drag1').offset().left ;
-              originy = $('#drag1').offset().top ;
+          var originx = $('#drag1').offset().left ,
+              originy = $('#drag1').offset().top ,
               lastx = 0,
               lasty = 0 ;
           
