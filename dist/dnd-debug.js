@@ -14,42 +14,28 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
         attrs: {
             element: {
                 value: null,
-                readOnly: true,
-                getter: function(val) {
-                    return $(val).eq(0);
-                }
+                readOnly: true
             },
             containment: {
-                value: document,
-                getter: function(val) {
+                value: $(document),
+                setter: function(val) {
                     return $(val).eq(0);
                 }
             },
             proxy: {
                 value: null,
-                getter: function(val) {
-                    if (val === null) {
-                        return null;
-                    } else {
-                        return $(val).eq(0);
-                    }
-                },
                 setter: function(val) {
                     if (val === null) {
                         return this.get("element").clone();
                     } else {
-                        return val;
+                        return $(val).eq(0);
                     }
                 }
             },
             drop: {
                 value: null,
-                getter: function(val) {
-                    if (val === null) {
-                        return null;
-                    } else {
-                        return $(val);
-                    }
+                setter: function(val) {
+                    return $(val);
                 }
             },
             disabled: false,
@@ -63,12 +49,14 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
         },
         initialize: function(elem, config) {
             var element = null;
+            var $elem = $(elem);
             // 检查源节点合法性，初始化
-            if ($(elem).length === 0 || $(elem).get(0).nodeType !== 1) {
+            if ($elem.length === 0 || $elem.get(0).nodeType !== 1) {
                 $.error("element error!");
             }
+            // 反正 element 只能通过config传递，就不要用 getter，加强性能
             config = $.extend({
-                element: elem
+                element: $elem.eq(0)
             }, config);
             Dnd.superclass.initialize.call(this, config);
             element = this.get("element");
@@ -184,8 +172,8 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
                 } else if (dnd === false) {
                     // dnd为false标识禁止该元素触发拖放
                     dnd = null;
-                } else if (isNaN(parseInt(dnd)) === false && parseInt(dnd) > 0) {
-                    dnd = dndArray[parseInt(dnd)];
+                } else if (isNaN(parseInt(dnd, 10)) === false && parseInt(dnd, 10) > 0) {
+                    dnd = dndArray[parseInt(dnd, 10)];
                 } else {
                     return true;
                 }
@@ -244,7 +232,8 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
     function executeDrag(event) {
         var containment = obj.get("containment"), axis = obj.get("axis"), xleft = event.pageX - diffX, xtop = event.pageY - diffY, originx = dragging.data("originx"), originy = dragging.data("originy"), offset = containment.offset();
         // containment is document
-        if (offset === null) {
+        // 不用 === 是因为 jquery 版本不同，返回值也不同
+        if (!offset) {
             offset = {
                 left: 0,
                 top: 0
@@ -346,8 +335,8 @@ define("arale/dnd/1.0.0/dnd-debug", [ "$-debug", "arale/base/1.1.1/base-debug", 
         } else {
             // 源节点移动到代理元素处
             if (element.css("position") === "relative") {
-                xleft = (isNaN(parseInt(element.css("left"))) ? 0 : parseInt(element.css("left"))) + xleft;
-                xtop = (isNaN(parseInt(element.css("top"))) ? 0 : parseInt(element.css("top"))) + xtop;
+                xleft = (isNaN(parseInt(element.css("left"), 10)) ? 0 : parseInt(element.css("left"), 10)) + xleft;
+                xtop = (isNaN(parseInt(element.css("top"), 10)) ? 0 : parseInt(element.css("top"), 10)) + xtop;
             } else if (element.css("position") === "absolute") {
                 xleft = xdragging.offset().left;
                 xtop = xdragging.offset().top;
