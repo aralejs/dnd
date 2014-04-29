@@ -24,7 +24,7 @@ Drap & Drop
 >注: 只取选择器中的第一个元素
 
 #### drops *element[Array]|selector|null*
-目标元素, 默认null为无
+可放置容器, 默认null为无
 >注: 可以有多个元素
 
 #### disabled *boolean*
@@ -38,18 +38,17 @@ Drap & Drop
 
 #### revert *boolean*
 是否返回源节点初始位置, 默认false为不返回
->注: 当目标元素不为null并且当前目标元素为null时释放鼠标 或者 按下esc,
- 将返回源节点初始位置
+>注: 当可放置容器不为null并且当前可放置容器为null时释放鼠标, 将返回源节点初始位置
 
 #### revertDuration *number*
 返回速度, 默认为500
 >注: 源节点显示(visible = true)时, 拖放结束时移动到拖放位置的速度也取此值
 
 #### draqCursor *string*
-拖放过程中没进入放置元素drop时光标形状, 默认为"move"
+拖放过程中没进入放置容器drop时光标形状, 默认为"move"
 
 #### dropCursor *string*
-拖放过程中进入放置元素drop时光标的形状, 默认为"copy"
+拖放过程中进入放置容器drop时光标的形状, 默认为"copy"
 
 #### zIndex *number*
 代理元素proxy拖放过程中的z-index, 默认为9999
@@ -84,28 +83,28 @@ dataTransfer为拖放数据, proxy为代理元素(元素对象均为jquery对象
 触发（按下鼠标并且至少移动1px),  常用来设置拖放数据dataTransfer
 	
 #### drag (proxy, drop)
-proxy为代理元素, drop为当前目标元素
+proxy为代理元素, drop为当前可放置容器
 拖放中一直触发, 直到鼠标释放
 >注: drop有可能为空
 
 #### dragenter (proxy, drop)
-proxy为代理元素, drop为当前目标元素
-鼠标刚进入目标元素中触发
+proxy为代理元素, drop为当前可放置容器
+鼠标刚进入可放置容器中触发
 
 #### dragover (proxy, drop)
-proxy为代理元素, drop为当前目标元素
-鼠标在目标元素中移动一直触发
+proxy为代理元素, drop为当前可放置容器
+鼠标在可放置容器中移动一直触发
 
 #### dragleave (proxy, drop)
-proxy为代理元素, drop为当前目标元素
-鼠标刚离开目标元素时触发
+proxy为代理元素, drop为当前可放置容器
+鼠标刚离开可放置容器时触发
 
 #### drop (dataTransfer, proxy, drop)
-proxy为代理元素, drop为当前目标元素
-鼠标在目标元素中释放时触发, 常用来读取dataTransfer值
+proxy为代理元素, drop为当前可放置容器
+鼠标在可放置容器中释放时触发, 常用来读取dataTransfer值
 
 #### dragend (element, drop)
-element为源节点元素, drop为当前目标元素; 
+element为源节点元素, drop为当前可放置容器; 
 拖放结束后触发, 常和dragleave处理相同, 用来取消dragenter中的设置
 >注: 当没触发drop时, drop为null;
 

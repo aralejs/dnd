@@ -10,7 +10,7 @@ define(function(require, exports, module) {
     var dnd = null; // 当前拖放的dnd对象
     var element = null; // 当前拖放元素
     var proxy = null; // 当前代理元素
-    var drop = null; // 当前拖放的目标元素  note. drops则为设置的目标元素
+    var drop = null; // 当前可放置容器  note. drops则为设置的可放置容器
     var diffX = 0;
     var diffY = 0; // diffX, diffY记录鼠标点击离源节点的距离
     var dataTransfer = {}; // 存储拖放信息, 在dragstart可设置,在drop中可读取
@@ -126,7 +126,7 @@ define(function(require, exports, module) {
                         pageY: event.pageY
                     });
                     
-                    // 根据element和drops位置来判断
+                    // 根据element和drops的相互位置来判断
                     // 是否要dragenter, dragleave和dragover并执行
                     executeDragEnterLeaveOver();
                     
@@ -146,7 +146,7 @@ define(function(require, exports, module) {
                 } else if (flag === true) {
                     flag = false;
 
-                    // 根据drops判断是否drop并执行
+                    // 根据当前的可放置容器判断是否drop并执行
                     executeDrop();
                     
                     // 根据revert判断是否要返回并执行
@@ -314,7 +314,7 @@ define(function(require, exports, module) {
     
     
     /*
-     * 根据proxy和dropping位置来判断是否dragenter, dragleave和dragover并执行
+     * 根据proxy和drops的相互位置来判断是否dragenter, dragleave和dragover并执行
     */
     function executeDragEnterLeaveOver() {
         var drops = dnd.get('drops');
@@ -354,8 +354,8 @@ define(function(require, exports, module) {
     
     
     /*
-     * 根据dropping判断是否drop并执行
-     * 当proxy不在dropping内且不需要revert时, 将proxy置于dropping中央
+     * 根据当前的可放置元素判断是否drop并执行
+     * 当proxy不完全在drop内且不需要revert时, 将proxy置于drop中央
     */
     function executeDrop() {
         var revert = dnd.get('revert');
@@ -382,7 +382,7 @@ define(function(require, exports, module) {
     
     /*
      * 根据revert判断是否要返回并执行
-     * 若drops(目标元素)不为null且drop(当前目标元素)为null, 则自动回到原处
+     * 若drops不为null且drop为null, 则自动回到原处
      * 处理完移除代理元素
     */
     function executeRevert() {
