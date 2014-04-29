@@ -8,6 +8,9 @@
     .drag {width:50px; height:50px; background:#07B1EE; position:relative;}
     .smalldrag {width:20px; height:20px; background:#fff; margin:auto; position:absolute; left:0; top:0; right:0; bottom:0;}
     .over {border:2px dashed #000;}
+    table.drags {width:200px; height:200px; border-collapse:collapse;}
+    table.drops {width:250px; height:250px; border-collapse:collapse; margin-top:20px;}
+    table td {border:1px solid black;}
 </style>
 
 
@@ -24,8 +27,8 @@
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $){
-    var dnd = new Dnd('#drag1', {containment: '#container1'}) ;
+seajs.use(['dnd', '$'], function(Dnd, $) {
+    var dnd = new Dnd('#drag1', {containment: '#container1'});
 });
 ````
 
@@ -40,8 +43,8 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $){
-    var dnd = new Dnd('#drag2', {containment: '#container2', axis: 'x'}) ;
+seajs.use(['dnd', '$'], function(Dnd, $) {
+    var dnd = new Dnd('#drag2', {containment: '#container2', axis: 'x'});
 });
 ````
 
@@ -57,8 +60,8 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $){
-    var dnd = new Dnd('#drag3', {containment: '#container3', visible: true}) ;
+seajs.use(['dnd', '$'], function(Dnd, $) {
+    var dnd = new Dnd('#drag3', {containment: '#container3', visible: true});
 });
 ````
 
@@ -73,8 +76,8 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $){
-    var dnd = new Dnd('#drag4', {drop: '#drop1'}) ;
+seajs.use(['dnd', '$'], function(Dnd, $) {
+    var dnd = new Dnd('#drag4', {drops: '#drop1'});
 });
 ````
 
@@ -89,37 +92,41 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $){
+seajs.use(['dnd', '$'], function(Dnd, $) {
     
-    var proxy = document.createElement('img'),
-        dnd = null ;
+    var proxy = document.createElement('img');
+    var dnd = null;
      
-    $(proxy).on('load', function(){
-        dnd = new Dnd('#drag5', {drop: '#drop2', proxy: proxy, visible: true, 
-              revert: true}) ;
+    $(proxy).on('load', function() {
+        dnd = new Dnd('#drag5', {
+            drops: '#drop2',
+            proxy: proxy,
+            visible: true, 
+            revert: true
+        });
         
         // dataTransfer为拖放数据，传输信息
-        dnd.on('dragstart', function(dataTransfer, dragging, dropping){
+        dnd.on('dragstart', function(dataTransfer, proxy){
             dataTransfer.data = '玉伯也叫射雕' ;
         })
-        dnd.on('dragenter', function(dragging, dropping){
-            dropping.addClass('over') ;
+        dnd.on('dragenter', function(proxy, drop){
+            drop.addClass('over') ;
         })
-        dnd.on('dragleave', function(dragging, dropping){
-            dropping.removeClass('over') ;
+        dnd.on('dragleave', function(proxy, drop){
+            drop.removeClass('over') ;
         })
-        dnd.on('drop', function(dataTransfer, dragging, dropping){
+        dnd.on('drop', function(dataTransfer, proxy, drop){
             if(typeof(dataTransfer.data) !== 'undefined'){
-                dropping.text(dataTransfer.data) ;
+                drop.text(dataTransfer.data) ;
             }
         })
-        dnd.on('dragend', function(dragging, dropping){
-            if(dropping) dropping.removeClass('over') ;
+        dnd.on('dragend', function(element, drop){
+            if(drop) drop.removeClass('over') ;
         })
     })
-    $(proxy).css('width', 50) ;
-    $(proxy).css('height', 50) ;
-    proxy.src = 'http://tp3.sinaimg.cn/1748374882/180/40020642911/1' ;
+    $(proxy).css('width', 50);
+    $(proxy).css('height', 50);
+    proxy.src = 'http://tp3.sinaimg.cn/1748374882/180/40020642911/1';
 });
 ````
 
@@ -128,7 +135,7 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 ````html
 <div id="drag6" class="drag" data-dnd=true 
-data-config='{"drop": "#drop3", "zIndex": 99}'>
+data-config='{"drops": "#drop3", "zIndex": 99}'>
     <div class="smalldrag"></div>
 </div>
 <br />
@@ -136,13 +143,7 @@ data-config='{"drop": "#drop3", "zIndex": 99}'>
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $){
-    $('#drag6').click(function(){
-        // 修改配置, 注意要重置dnd为true
-        $(this).data('dnd', true) ; // arale/dnd/1.0.0/dnd 应为 dnd
-        $(this).data('config', null) ;
-    }) ;
-}) ;
+seajs.use('dnd');
 ````
 
 
@@ -162,5 +163,50 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 ````
 
 ````javascript
-seajs.use(['dnd', '$']) ;
+seajs.use('dnd');
+````
+
+##8. 一次设置多个拖放元素
+
+````html
+<table class="drags">
+    <tr>
+        <td>1.1</td>
+        <td>1.2</td>
+        <td>1.3</td>
+    </tr>
+    <tr>
+        <td>2.1</td>
+        <td>2.2</td>
+        <td>2.3</td>
+    </tr>
+    <tr>
+        <td>3.1</td>
+        <td>3.2</td>
+        <td>3.3</td>
+    </tr>
+</table>
+<table class="drops">
+    <tr>
+        <td>1.1</td>
+        <td>1.2</td>
+        <td>1.3</td>
+    </tr>
+    <tr>
+        <td>2.1</td>
+        <td>2.2</td>
+        <td>2.3</td>
+    </tr>
+    <tr>
+        <td>3.1</td>
+        <td>3.2</td>
+        <td>3.3</td>
+    </tr>
+</table>
+````
+
+````javascript
+seajs.use(['dnd', '$'], function(Dnd, $) {
+    var dnd = new Dnd('table.drags td', {drops: 'table.drops td'});
+});
 ````

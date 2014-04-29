@@ -13,7 +13,7 @@ Drap & Drop
 
 #### element *element[Array]|selector*
 可拖放的元素, 即源节点
->注: 只取第一个元素, 非法时抛出异常
+>注: 支持多个元素, 非法时抛出异常
 
 #### containment *element[Array]|selector|null*
 拖放的边界, 默认为document
@@ -21,9 +21,9 @@ Drap & Drop
 
 #### proxy *element[Array]|selector|null*
 代理元素, 实际上跟随鼠标移动的元素, 默认null为源节点element的clone
->注: 只取第一个元素
+>注: 只取选择器中的第一个元素
 
-#### drop *element[Array]|selector|null*
+#### drops *element[Array]|selector|null*
 目标元素, 默认null为无
 >注: 可以有多个元素
 
@@ -67,8 +67,7 @@ Drap & Drop
 
 #### get(option)
 获取配置属性
->注: 配置属性为DOM元素的, 均返回其jquery对象, proxy将返回源节点clone元素的
-jquery对象(proxy设置为null时)
+>注: 配置属性为DOM元素的, 均返回其jquery对象
 
 #### open()
 静态方法, 用Dnd直接调用, 开启页面的拖放功能
@@ -80,37 +79,35 @@ jquery对象(proxy设置为null时)
 
 ### 事件
 
-#### dragstart (dataTransfer, dragging, dropping)
-dataTransfer为拖放数据, dragging为代理元素(元素对象均为jquery对象); 拖放开始时
+#### dragstart (dataTransfer, proxy)
+dataTransfer为拖放数据, proxy为代理元素(元素对象均为jquery对象); 拖放开始时
 触发（按下鼠标并且至少移动1px),  常用来设置拖放数据dataTransfer
->注: dropping为空, 此处为保持参数一致
 	
-#### drag (dragging, dropping)
-dragging为代理元素, dropping为当前目标元素
+#### drag (proxy, drop)
+proxy为代理元素, drop为当前目标元素
 拖放中一直触发, 直到鼠标释放
->注: dropping有可能为空
+>注: drop有可能为空
 
-#### dragenter (dragging, dropping)
-dragging为代理元素, dropping为当前目标元素
+#### dragenter (proxy, drop)
+proxy为代理元素, drop为当前目标元素
 鼠标刚进入目标元素中触发
 
-#### dragover (dragging, dropping)
-dragging为代理元素, dropping为当前目标元素
+#### dragover (proxy, drop)
+proxy为代理元素, drop为当前目标元素
 鼠标在目标元素中移动一直触发
 
-#### dragleave (dragging, dropping)
-dragging为代理元素, dropping为当前目标元素
+#### dragleave (proxy, drop)
+proxy为代理元素, drop为当前目标元素
 鼠标刚离开目标元素时触发
 
-#### drop (dataTransfer, dragging, dropping)
-dragging为源节点元素, dropping为当前目标元素
+#### drop (dataTransfer, proxy, drop)
+proxy为代理元素, drop为当前目标元素
 鼠标在目标元素中释放时触发, 常用来读取dataTransfer值
 
-#### dragend (dragging, dropping)
-dragging为源节点元素, dropping为当前目标元素; 
+#### dragend (element, drop)
+element为源节点元素, drop为当前目标元素; 
 拖放结束后触发, 常和dragleave处理相同, 用来取消dragenter中的设置
->注: 当没触发drop时, dropping为null; 按esc时会回到源节点初始位置, 但仍会触发
-dragend
+>注: 当没触发drop时, drop为null;
 
 
 ### data-attr实现拖放
@@ -130,26 +127,30 @@ seajs.use(['dnd', '$'], function(Dnd, $){
         dnd = null ;
 
     $(proxy).on('load', function(){
-        dnd = new Dnd('#drag5', {drop: '#drop2', proxy: proxy, visible: true, 
-              revert: true}) ;
+        dnd = new Dnd('#drag', {
+            drops: '#drop',
+            proxy: proxy,
+            visible: true, 
+            revert: true
+        }) ;
 
         // dataTransfer为拖放数据，传输信息
-        dnd.on('dragstart', function(dataTransfer, dragging, dropping){
+        dnd.on('dragstart', function(dataTransfer, proxy){
             dataTransfer.data = '玉伯也叫射雕' ;
         })
-        dnd.on('dragenter', function(dragging, dropping){
-            dropping.addClass('over') ;
+        dnd.on('dragenter', function(proxy, drop){
+            drop.addClass('over') ;
         })
-        dnd.on('dragleave', function(dragging, dropping){
-            dropping.removeClass('over') ;
+        dnd.on('dragleave', function(proxy, drop){
+            drop.removeClass('over') ;
         })
-        dnd.on('drop', function(dataTransfer, dragging, dropping){
+        dnd.on('drop', function(dataTransfer, proxy, drop){
             if(typeof(dataTransfer.data) !== 'undefined'){
-                dropping.text(dataTransfer.data) ;
+                drop.text(dataTransfer.data) ;
             }
         })
-        dnd.on('dragend', function(dragging, dropping){
-            if(dropping) dropping.removeClass('over') ;
+        dnd.on('dragend', function(element, drop){
+            if(drop) drop.removeClass('over') ;
         })
     })
     $(proxy).css('width', 50) ;
@@ -160,10 +161,7 @@ seajs.use(['dnd', '$'], function(Dnd, $){
 
 用data-attr来实现的简单拖放
 ```html
-<div id="drag6" class="drag" data-dnd=true 
-data-config='{"drop": "#drop3", "zIndex": 99}'></div>
-<br />
-<div id="drop3" class="container"></div>
+<button data-dnd=true>I can drag</button>
 ```
 
 
