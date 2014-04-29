@@ -54,7 +54,8 @@ define(function(require, exports, module) {
         }, 
         
         initialize: function(elem, config) {
-            // 检查源节点合法性，初始化
+
+            // 元素不能为空
             elements = $(elem);
             if (elements.length === 0) {
                 $.error('element error!');
@@ -66,15 +67,14 @@ define(function(require, exports, module) {
 
             // 在源节点上存储dnd uid
             $(elements).data('dnd', uid);
-            dndArray[uid] = this;
-            uid++;
+            dndArray[uid++] = this;
         }   
     });
     
 
 
     /*
-     * 开启页面Dnd功能,绑定鼠标按下、移动、释放以及ecs按下事件
+     * 开启页面Dnd功能,绑定鼠标按下、移动、释放事件
     */
     Dnd.open = function() {
         $(document).on('mousedown mousemove mouseup', handleEvent);
@@ -83,7 +83,7 @@ define(function(require, exports, module) {
 
 
     /*
-     * 关闭页面Dnd功能,解绑鼠标按下、移动、释放以及ecs按下事件
+     * 关闭页面Dnd功能,解绑鼠标按下、移动、释放事件
     */
     Dnd.close = function() {
         $(document).off('mousedown mousemove mouseup', handleEvent);
@@ -126,7 +126,7 @@ define(function(require, exports, module) {
                         pageY: event.pageY
                     });
                     
-                    // 根据element和drops的相互位置来判断
+                    // 根据proxy和可放置容器的相互位置来判断
                     // 是否要dragenter, dragleave和dragover并执行
                     executeDragEnterLeaveOver();
                     
@@ -146,10 +146,13 @@ define(function(require, exports, module) {
                 } else if (flag === true) {
                     flag = false;
 
+                    proxy.css('cursor', 'default');
+                    proxy.focus();
+
                     // 根据当前的可放置容器判断是否drop并执行
                     executeDrop();
                     
-                    // 根据revert判断是否要返回并执行
+                    // 根据revert属性判断是否要返回并执行
                     executeRevert();
                 }
                 break;
@@ -200,6 +203,7 @@ define(function(require, exports, module) {
         }
         
         // 设置代理元素proxy，并将其插入element的父元素中
+        // 这样保证proxy的样式与源节点element一致
         proxy.css({
             position: 'absolute',
             left: 0,
@@ -214,11 +218,11 @@ define(function(require, exports, module) {
         proxy.css({
             left: element.offset().left - proxy.data('originx'), 
             top: element.offset().top - proxy.data('originy'),
-            width: element.css('width'),
-            height: element.css('height')
+            width: element.width(),
+            height: element.height()
         });
 
-        // 记录鼠标点击位置与element的距离
+        // 记录鼠标点击位置与源节点element的距离
         diffX = event.pageX - element.offset().left;
         diffY = event.pageY - element.offset().top;
 
@@ -314,7 +318,8 @@ define(function(require, exports, module) {
     
     
     /*
-     * 根据proxy和drops的相互位置来判断是否dragenter, dragleave和dragover并执行
+     * 根据proxy和可放置容器的相互位置来判断是否dragenter,
+     * dragleave和dragover并执行
     */
     function executeDragEnterLeaveOver() {
         var drops = dnd.get('drops');
@@ -354,7 +359,7 @@ define(function(require, exports, module) {
     
     
     /*
-     * 根据当前的可放置元素判断是否drop并执行
+     * 根据proxy和当前的可放置容器地相互位置判断是否drop并执行
      * 当proxy不完全在drop内且不需要revert时, 将proxy置于drop中央
     */
     function executeDrop() {
@@ -374,7 +379,6 @@ define(function(require, exports, module) {
                     (drop.outerHeight() - proxy.outerHeight()) / 2 - originy);
         }
         
-        // 此处传递的proxy为源节点element
         dnd.trigger('drop', dataTransfer, proxy, drop);
     }
     
@@ -382,7 +386,7 @@ define(function(require, exports, module) {
     
     /*
      * 根据revert判断是否要返回并执行
-     * 若drops不为null且drop为null, 则自动回到原处
+     * 若可放置容器drops不为null且当前可放置容器drop为null, 则自动回到原处
      * 处理完移除代理元素
     */
     function executeRevert() {
@@ -390,11 +394,11 @@ define(function(require, exports, module) {
         var revert = dnd.get('revert');
         var revertDuration = dnd.get('revertDuration');
         var visible = dnd.get('visible');
+        var zIndex = dnd.get('zIndex');
         var xleft = proxy.offset().left - element.offset().left;
         var xtop = proxy.offset().top -  element.offset().top;
         var originx = proxy.data('originx');
         var originy = proxy.data('originy');
-        var zIndex = dnd.get('zIndex');
             
         if (revert === true || (drop === null && drops !== null)) {
             
@@ -443,7 +447,7 @@ define(function(require, exports, module) {
                 drop = null;
             } else {
                 
-                // 源节点显示时动画移动到代理元素处
+                // 源节点显示时，动画移动到代理元素处
                 element.animate({
                     left: xleft,
                     top: xtop
@@ -470,7 +474,7 @@ define(function(require, exports, module) {
         var offset = $(A).offset();
         
         // A is document
-        if (offset === null) {
+        if (!offset) {
             offset = {left:0, top:0};
         }
        

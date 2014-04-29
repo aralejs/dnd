@@ -6,21 +6,9 @@ define(function(require){
 
 
   describe('Dnd', function(){
-      var template = '<style>' + 
-                     '.container{width:500px; height:200px;background:#CCC;}' +
-                     '.drag {width:50px; height:50px; background:#07B1EE; ' +
-		     'position:relative;}' + 
-		     '.smalldrag {width:20px; height:20px; background:#fff; ' +
-		     'margin:auto; position:absolute; left:0; top:0; right:0;' +
-		     'bottom:0;}' +
-                     '</style>' +
-                     '<div id="wrap"><div id="container1" class="container">' +
-                     '<div id="drag1" class="drag">' +
-		     '<div class="smalldrag"></div>' +
-		     '</div></div><br/>' +
-                     '<div id="drop1" class="container"></div></div>', 
-          element = null,
-          dnd = null ;
+      var template = null,
+      var element = null,
+      var dnd = null ;
       
       beforeEach(function(){
           element = $(template).appendTo(document.body);
