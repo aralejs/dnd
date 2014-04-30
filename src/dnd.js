@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
     var Dnd = null;
 
     // 依赖组件
@@ -27,19 +27,19 @@ define(function(require, exports, module) {
             },
             containment: {
                 value: $(document),
-                setter: function(val) {
+                setter: function (val) {
                     return $(val).eq(0);
                 }
             },
             proxy: {
                 value: null,
-                setter: function(val) {
+                setter: function (val) {
                     return $(val).eq(0);
                 }  
             },
             drops: {
                 value: null,
-                setter: function(val) {
+                setter: function (val) {
                     return $(val);
                 }  
             },
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
             zIndex: 9999 
         }, 
         
-        initialize: function(elem, config) {
+        initialize: function (elem, config) {
 
             // 元素不能为空
             elements = $(elem);
@@ -76,7 +76,7 @@ define(function(require, exports, module) {
     /*
      * 开启页面Dnd功能,绑定鼠标按下、移动、释放事件
     */
-    Dnd.open = function() {
+    Dnd.open = function () {
         $(document).on('mousedown mousemove mouseup', handleEvent);
     };
    
@@ -85,7 +85,7 @@ define(function(require, exports, module) {
     /*
      * 关闭页面Dnd功能,解绑鼠标按下、移动、释放事件
     */
-    Dnd.close = function() {
+    Dnd.close = function () {
         $(document).off('mousedown mousemove mouseup', handleEvent);
     };
  
@@ -119,7 +119,7 @@ define(function(require, exports, module) {
                     // 开始拖放
                     executeDragStart();
                 } else if (flag === true) {
-                    
+
                     // 根据边界和方向一起判断是否drag并执行
                     executeDrag({
                         pageX: event.pageX,
@@ -169,7 +169,7 @@ define(function(require, exports, module) {
         
         // 查找自身和父元素，判断是否为可拖放元素
         targetArray.unshift(event.target);
-        $.each(targetArray, function(index, elem) {
+        $.each(targetArray, function (index, elem) {
             if ($(elem).data('dnd') !== undefined) {
                 dnd = $(elem).data('dnd');
 
@@ -333,7 +333,7 @@ define(function(require, exports, module) {
         }
 
         if (drop === null) {
-            $.each(drops, function(index, elem) {
+            $.each(drops, function (index, elem) {
                 if (isContain(elem, xleft, xtop) === true) {
                     proxy.css('cursor', dropCursor);
                     proxy.focus();
@@ -406,7 +406,7 @@ define(function(require, exports, module) {
             proxy.animate({
                 left: element.offset().left - originx,
                 top: element.offset().top - originy
-            }, revertDuration, function() {
+            }, revertDuration, function () {
                 element.css('visibility', '');
                 proxy.remove();
                 proxy = null;
@@ -451,7 +451,7 @@ define(function(require, exports, module) {
                 element.animate({
                     left: xleft,
                     top: xtop
-                }, revertDuration, function() {
+                }, revertDuration, function () {
                     proxy.remove();
                     proxy = null;
 
