@@ -1,7 +1,6 @@
 {
-  "family": "arale",
-  "name": "dnd",
-  "version": "1.0.0",
+  "name": "arale-dnd",
+  "version": "1.1.0",
   "keywords": ["utility"],
   "description": "drag and drop",
   "homepage": "https://github.com/aralejs/dnd",
@@ -18,10 +17,14 @@
   },
   "licenses": "MIT",
   "spm": {
-    "output": ["dnd.js"],
-    "alias": {
-      "$": "$",
-      "base": "arale/base/1.1.1/base"
-    }
+    "main": "index.js",
+    "dependencies": {
+      "jquery": "1.7.2",
+      "arale-base": "1.2.0"
+    },
+    "devDependencies": {
+      "expect.js": "0.3.1"
+    },
+    "buildArgs": "--ignore jquery"
   }
 }
