@@ -2,6 +2,7 @@
 
 ---
 
+[![spm package](http://spmjs.io/badge/arale-dnd)](http://spmjs.io/package/arale-dnd)
 [![Build Status](https://secure.travis-ci.org/aralejs/dnd.png)](https://travis-ci.org/aralejs/dnd)
 [![Coverage Status](https://coveralls.io/repos/aralejs/dnd/badge.png?branch=master)](https://coveralls.io/r/aralejs/dnd)
 
