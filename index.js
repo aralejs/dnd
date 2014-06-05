@@ -424,8 +424,8 @@ function executeRevert() {
             xtop = (isNaN(parseInt(element.css('top'), 10)) ? 0 : 
                     parseInt(element.css('top'), 10)) + xtop;
         } else if (element.css('position') === 'absolute') {
-            xleft = proxy.offset().left;
-            xtop = proxy.offset().top;
+            xleft = proxy.offset().left - originx;
+            xtop = proxy.offset().top - originy;
         } else {
             element.css('position', 'relative');
         }
