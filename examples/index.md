@@ -29,7 +29,7 @@
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $) {
+seajs.use(['index', 'jquery'], function(Dnd, $) {
     var dnd = new Dnd('#ex1 .drag', {containment: '#ex1 .container'});
 });
 ````
@@ -47,7 +47,7 @@ seajs.use(['dnd', '$'], function(Dnd, $) {
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $) {
+seajs.use(['index', 'jquery'], function(Dnd, $) {
     var dnd = new Dnd('#ex2 .drag', {
         containment: '#ex2 .container',
         axis: 'x'
@@ -69,7 +69,7 @@ seajs.use(['dnd', '$'], function(Dnd, $) {
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $) {
+seajs.use(['index', 'jquery'], function(Dnd, $) {
     var dnd = new Dnd('#ex3 .drag', {
         containment: '#ex3 .container',
         visible: true
@@ -90,7 +90,7 @@ seajs.use(['dnd', '$'], function(Dnd, $) {
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $) {
+seajs.use(['index', 'jquery'], function(Dnd, $) {
     var dnd = new Dnd('#ex4 .drag', {drops: '#ex4 .container'});
 });
 ````
@@ -108,7 +108,7 @@ seajs.use(['dnd', '$'], function(Dnd, $) {
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $) {
+seajs.use(['index', 'jquery'], function(Dnd, $) {
     
     var proxy = document.createElement('img');
     var dnd = null;
@@ -161,7 +161,7 @@ seajs.use(['dnd', '$'], function(Dnd, $) {
 ````
 
 ````javascript
-seajs.use('dnd');
+seajs.use('index');
 ````
 
 
@@ -183,7 +183,7 @@ seajs.use('dnd');
 ````
 
 ````javascript
-seajs.use('dnd');
+seajs.use('index');
 ````
 
 ##8. 一次设置多个拖放元素
@@ -208,7 +208,7 @@ seajs.use('dnd');
 ````
 
 ````javascript
-seajs.use(['dnd', '$'], function(Dnd, $) {
+seajs.use(['index', 'jquery'], function(Dnd, $) {
     var dnd = new Dnd('#ex8 .drag', {drops: '#ex8 .container'});
 });
 ````
