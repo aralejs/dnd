@@ -97,6 +97,11 @@ function handleEvent(event) {
     switch(event.type) {
         case 'mousedown':
             if (event.which === 1) {
+                // 如果上次拖放未执行完则返回
+                if (proxy) {
+                    event.preventDefault();
+                    return;
+                }
 
                 // 检测并执行预拖放
                 executeDragPre({

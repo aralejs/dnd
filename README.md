@@ -6,7 +6,7 @@
 [![Build Status](https://secure.travis-ci.org/aralejs/dnd.png)](https://travis-ci.org/aralejs/dnd)
 [![Coverage Status](https://coveralls.io/repos/aralejs/dnd/badge.png?branch=master)](https://coveralls.io/r/aralejs/dnd)
 
-Drap & Drop
+Drag & Drop
 
 ## 配置说明
 
@@ -45,7 +45,7 @@ Drap & Drop
 返回速度, 默认为500
 >注: 源节点显示(visible = true)时, 拖放结束时移动到拖放位置的速度也取此值
 
-#### draqCursor *string*
+#### dragCursor *string*
 拖放过程中没进入放置容器drop时光标形状, 默认为"move"
 
 #### dropCursor *string*
